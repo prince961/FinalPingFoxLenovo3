@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="HouseConfigType">
+        <item>1 Bhk</item>
+        <item>2 Bhk</item>
+        <item>3 Bhk</item>
+        <item>4 Bhk</item>
+        <item>Custom</item>
+    </string-array>
+</resources>

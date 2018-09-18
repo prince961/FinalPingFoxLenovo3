@@ -152,13 +152,13 @@ public class Main2Activity extends AppCompatActivity {
                                 Log.d("LoggedInUser","new user");
                                 //Intent intent = new Intent(getBaseContext(), FirstLogin.class);
                                 //startActivity(intent);
-                                fragmentManager.beginTransaction().replace(R.id.content_frame, new LoginFragment()).commit();
+                                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentFirstLogin()).commit();
 
 
 
                             } else {
                                 Log.d("LoggedInUser","old user");
-                                fragmentManager.beginTransaction().replace(R.id.content_frame, new LoginFragment()).commit();
+                                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentFirstLogin()).commit();
                                 //Intent intent = new Intent(getBaseContext(), FirstLogin.class);
                                 //startActivity(intent);
 

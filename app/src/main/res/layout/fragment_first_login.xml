@@ -48,7 +48,7 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
-        <RadioButton
+        <CheckBox
             android:id="@+id/locationRadioButton"
             android:onClick="locationAccess"
             android:layout_width="wrap_content"

@@ -122,11 +122,14 @@ public class LoginActivity extends AppCompatActivity {
                             User localUser = new User(firebaseUser.getDisplayName(),firebaseUser.getEmail());
                             databaseReference.child("users").child(firebaseUser.getUid()).setValue(localUser);
                             assert metadata != null;
+                            Log.i("metadata", String.valueOf(metadata.getCreationTimestamp()));
                             if (metadata.getCreationTimestamp() == metadata.getLastSignInTimestamp()) {
                                 // The user is new, show them a fancy intro screen!
                                 editor.putBoolean("UserLoggedIn",true);
                                 editor.putBoolean("NewUser",true);
                                 Log.d("LoggedInUser","new user");
+                                editor.commit();
+
                                 Intent intent = new Intent(getBaseContext(), MainActivity.class);
                                 startActivity(intent);
                                 //fragmentManager.beginTransaction().replace(R.id.content_frame, new LoginFragment()).commit();
@@ -137,6 +140,8 @@ public class LoginActivity extends AppCompatActivity {
                                 Log.d("LoggedInUser","old user");
                                 editor.putBoolean("UserLoggedIn",true);
                                 editor.putBoolean("NewUser",false);
+                                editor.putString("UserName","Mohit");
+                                editor.commit();
                                 //fragmentManager.beginTransaction().replace(R.id.content_frame, new LoginFragment()).commit();
                                 Intent intent = new Intent(getBaseContext(), MainActivity.class);
                                 startActivity(intent);

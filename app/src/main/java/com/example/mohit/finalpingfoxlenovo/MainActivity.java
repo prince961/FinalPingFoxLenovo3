@@ -1,12 +1,16 @@
 package com.example.mohit.finalpingfoxlenovo;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -18,6 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.location.LocationServices;
 
 
 public class MainActivity extends AppCompatActivity
@@ -51,10 +56,11 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         Boolean UserLoggedIn = sharedPreferences.getBoolean("UserLoggedIn",false);
+        Log.i("UsernameMainActivity",sharedPreferences.getString("UserName","xyz"));
 
         if (UserLoggedIn){
-            fragmentManager.beginTransaction().replace(R.id.content_frame, new LoginFragment()).commit();
-            //Open Devices screen
+            fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentFirstLogin()).commit();
+            Log.i("oncreated","this line is hit");
         }else {
             Log.i("LoggedInUser", String.valueOf(UserLoggedIn));
             Intent intent = new Intent(this,LoginActivity.class);
@@ -101,7 +107,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_login) {
-            fragmentManager.beginTransaction().replace(R.id.content_frame, new LoginFragment()).commit();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentFirstLogin()).commit();
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
 
@@ -118,5 +124,46 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void locationAccess(View view) {
+        Log.d("radio button ", "pressed");
+        //getLocationPermission();
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+            Log.i("Location","permission not granted");
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                Log.i("Explanation Location","permission not granted");
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+                Log.i("LocationNoExplanation","permission not granted");
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+
+
+
+
+        //fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity().getApplicationContext());
+     /*   if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+           return;
+        }*/
     }
 }
