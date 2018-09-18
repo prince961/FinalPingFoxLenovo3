@@ -83,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
         if (requestCode == RC_SIGN_IN) {
             // The Task returned from this call is always completed, no need to attach
             // a listener.
+            Log.i("Line Status","start activity fore result method excecuted");
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
         }
@@ -93,8 +94,8 @@ public class LoginActivity extends AppCompatActivity {
             account = completedTask.getResult(ApiException.class);
             // Signed in successfully, show authenticated UI.
             //Create a user account on firebase with firebaseAuthWithGoogle method
+            Log.i("Line Status","firebase auth with google method excecuted");
             firebaseAuthWithGoogle(account);
-
 
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
