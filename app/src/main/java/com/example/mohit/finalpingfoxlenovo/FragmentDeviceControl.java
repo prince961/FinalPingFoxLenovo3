@@ -42,8 +42,48 @@ public class FragmentDeviceControl extends Fragment {
         myView = inflater.inflate(R.layout.fragment_control_devices, container, false);
         deviceStatusImage =(ImageView) myView.findViewById(R.id.DeviceStatusImage);
         toggleButton = myView.findViewById(R.id.toggleButton);
-        ConnectToCloudMqtt c = new ConnectToCloudMqtt();
-        c.execute();
+
+
+        Log.i("control_devices","trying to establish connection");
+        String clientId = MqttClient.generateClientId();
+        Log.i("control_devices","client id:" + clientId);
+
+        client = new MqttAndroidClient(getContext(),"tcp://m11.cloudmqtt.com:15121",
+                clientId);
+        MqttConnectOptions options = new MqttConnectOptions();
+        options.setUserName("rdqlgagy");
+        options.setPassword("V4-dlT_EKFEe".toCharArray());
+
+        try {
+
+            IMqttToken token = client.connect(options);
+            token.setActionCallback(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    // We are connected
+                    Log.d("TAG", "onSuccess");
+                    try {
+                        subscribe(client,"stat/sonoff1/POWER",1);
+                    } catch (MqttException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    // Something went wrong e.g. connection timeout or firewall problems
+
+                    Log.d("TAG", "onFailure");
+
+                }
+            });
+        } catch (MqttException e) {
+            Log.d("TAG", "not tried");
+
+            e.printStackTrace();
+        }
+
 
 
 
@@ -113,54 +153,6 @@ public class FragmentDeviceControl extends Fragment {
             }
         });
     }
-
-    class ConnectToCloudMqtt extends AsyncTask<Void,Void,Void>{
-        @Override
-        protected Void doInBackground(Void... voids) {
-            Log.i("control_devices","trying to establish connection");
-            String clientId = MqttClient.generateClientId();
-            Log.i("control_devices","client id:" + clientId);
-
-            client = new MqttAndroidClient(getContext(),"tcp://m11.cloudmqtt.com:15121",
-                    clientId);
-            MqttConnectOptions options = new MqttConnectOptions();
-            options.setUserName("rdqlgagy");
-            options.setPassword("V4-dlT_EKFEe".toCharArray());
-
-            try {
-
-                IMqttToken token = client.connect(options);
-                token.setActionCallback(new IMqttActionListener() {
-                    @Override
-                    public void onSuccess(IMqttToken asyncActionToken) {
-                        // We are connected
-                        Log.d("TAG", "onSuccess");
-                        try {
-                            subscribe(client,"stat/sonoff1/POWER",1);
-                        } catch (MqttException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-
-                    @Override
-                    public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                        // Something went wrong e.g. connection timeout or firewall problems
-
-                        Log.d("TAG", "onFailure");
-
-                    }
-                });
-            } catch (MqttException e) {
-                Log.d("TAG", "not tried");
-
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
-
-
 
     private Boolean getDeviceStatus() {
         return null;

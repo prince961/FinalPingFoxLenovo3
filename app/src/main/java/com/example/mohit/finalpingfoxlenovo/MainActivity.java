@@ -214,11 +214,8 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_login) {
             fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentFirstLogin()).commit();
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
+        }else if (id == R.id.offline_mode) {
+            fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentOfflineMode()).commit();
 
         } else if (id == R.id.nav_share) {
 
