@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "238979945096-ndbe01a63cuj41bfs9ke78vjfj6c42sb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mohit.finalpingfoxlenovo",
+            "certificate_hash": "eb69e851055d4b8a7a70b18cdf55a7977523f099"
+          }
+        },
+        {
           "client_id": "238979945096-2vllvgf1rfru8v1d4j6d81ep9vff3lnq.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -108,6 +116,14 @@
           "android_info": {
             "package_name": "com.example.mohit.mqtttry1",
             "certificate_hash": "eb69e851055d4b8a7a70b18cdf55a7977523f099"
+          }
+        },
+        {
+          "client_id": "238979945096-liq5ufmnonfoa7ffh0495fgnibd1iaka.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mohit.mqtttry1",
+            "certificate_hash": "3a94af6483d5ee4140bc35f43fd93bf7fff121c4"
           }
         },
         {

@@ -8,5 +8,6 @@
     <string name="action_settings">Settings</string>
     <string name="app_name">Pingfox</string>
     <string name="register_here"><u>Register here</u></string>
+    <string name="action_logout">Logout</string>
 
 </resources>

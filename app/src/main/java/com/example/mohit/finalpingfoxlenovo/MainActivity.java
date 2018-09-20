@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -22,13 +24,21 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
         SharedPreferences sharedPreferences ;
     FragmentManager fragmentManager = getSupportFragmentManager();
+    GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +69,15 @@ public class MainActivity extends AppCompatActivity
         Log.i("UsernameMainActivity",sharedPreferences.getString("UserName","xyz"));
 
         if (UserLoggedIn){
-            fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentFirstLogin()).commit();
-            Log.i("oncreated","this line is hit");
+            Boolean newUser = sharedPreferences.getBoolean("NewUser",false);
+            if (newUser) {
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentFirstLogin()).commit();
+                Log.i("oncreated", "this line is hit");
+            }else {
+                //oldUser
+                Log.i("oncreated", "swtarting fragment to control device");
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentDeviceControl()).commit();
+            }
         }else {
             Log.i("LoggedInUser", String.valueOf(UserLoggedIn));
             Intent intent = new Intent(this,LoginActivity.class);
@@ -94,6 +111,18 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Log.w("ButtonPressed", "Logout button pressed");
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.default_web_client_id))
+                    .requestEmail()
+                    .build();
+            mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
+            FirebaseAuth.getInstance().signOut();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear();
+            editor.apply();
+            Intent intent = new Intent(this,MainActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -127,11 +156,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void locationAccess(View view) {
-        Log.d("radio button ", "pressed");
+        Log.d("CheckBox ", "pressed1");
+        FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.getApplicationContext());
         //getLocationPermission();
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-        {
+                != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.i("Location","permission not granted");
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     android.Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -149,21 +178,25 @@ public class MainActivity extends AppCompatActivity
                 // app-defined int constant. The callback method gets the
                 // result of the request.
             }
+        }else {
+            Log.i("Location", "permission already granted");
+            Task location = fusedLocationProviderClient.getLastLocation();
+            location.addOnCompleteListener(new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if (task.isSuccessful()) {
+                        Log.d("location task", "successful");
+                        Location currentLocation = (Location) task.getResult();
+                        Log.d("latitude", String.valueOf(currentLocation.getLatitude()));
+                        Log.d("Longitude", String.valueOf(currentLocation.getLongitude()));
+
+                    } else {
+                        Log.d("location task", "failed");
+                    }
+                }
+            });
         }
 
 
-
-
-        //fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity().getApplicationContext());
-     /*   if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-           return;
-        }*/
     }
 }

@@ -30,10 +30,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private Button BLogin;
-    private SignInButton gButton;
+
     private FirebaseAuth mAuth;
-    GoogleApiClient googleApiClient ;
     private final static int RC_SIGN_IN = 2;
     GoogleSignInClient mGoogleSignInClient;private GoogleSignInAccount account;
     private DatabaseReference databaseReference;
@@ -130,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                                 editor.putBoolean("NewUser",true);
                                 Log.d("LoggedInUser","new user");
                                 editor.commit();
-
+                                mGoogleSignInClient.signOut();
                                 Intent intent = new Intent(getBaseContext(), MainActivity.class);
                                 startActivity(intent);
                                 //fragmentManager.beginTransaction().replace(R.id.content_frame, new LoginFragment()).commit();
@@ -144,6 +142,7 @@ public class LoginActivity extends AppCompatActivity {
                                 editor.putString("UserName","Mohit");
                                 editor.commit();
                                 //fragmentManager.beginTransaction().replace(R.id.content_frame, new LoginFragment()).commit();
+                                mGoogleSignInClient.signOut();
                                 Intent intent = new Intent(getBaseContext(), MainActivity.class);
                                 startActivity(intent);
 
