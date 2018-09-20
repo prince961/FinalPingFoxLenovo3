@@ -23,6 +23,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.ImageView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -33,10 +35,22 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-        SharedPreferences sharedPreferences ;
+    MqttAndroidClient client ;
+    String SdeviceStatus;
+    Boolean BdeviceOn ;
+    ImageView deviceStatusImage ;
+    Button toggleButton;
+    SharedPreferences sharedPreferences ;
     FragmentManager fragmentManager = getSupportFragmentManager();
     GoogleSignInClient mGoogleSignInClient;
 
@@ -69,11 +83,13 @@ public class MainActivity extends AppCompatActivity
         Log.i("UsernameMainActivity",sharedPreferences.getString("UserName","xyz"));
 
         if (UserLoggedIn){
+            //Boolean newUser = true;
             Boolean newUser = sharedPreferences.getBoolean("NewUser",false);
             if (newUser) {
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentFirstLogin()).commit();
-                Log.i("oncreated", "this line is hit");
+                Log.i("oncreated", "starting first login fragment");
             }else {
+                //connectWithCloudMQTT();
                 //oldUser
                 Log.i("oncreated", "swtarting fragment to control device");
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentDeviceControl()).commit();
@@ -83,6 +99,66 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this,LoginActivity.class);
             startActivity(intent);
         }
+    }
+
+
+
+    private void connectWithCloudMQTT() {
+        String clientId = MqttClient.generateClientId();
+
+        client = new MqttAndroidClient(this,"tcp://m11.cloudmqtt.com:15121",
+                clientId);
+        MqttConnectOptions options = new MqttConnectOptions();
+        options.setUserName("rdqlgagy");
+        options.setPassword("V4-dlT_EKFEe".toCharArray());
+
+        try {
+
+            IMqttToken token = client.connect(options);
+            Log.i("MainActivity","trying to establish connection");
+            token.setActionCallback(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    // We are connected
+                    Log.d("MainActivity", "MMQTT Connection successful");
+                    try {
+                        subscribe(client,"stat/sonoff1/POWER",1);
+                    } catch (MqttException e) {
+                        Log.d("MainActivity", "MMQTT exception");
+                        e.printStackTrace();
+                    }
+
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    // Something went wrong e.g. connection timeout or firewall problems
+
+                    Log.d("MainActivity", "Connection to Cloud mqtt failed");
+
+                }
+            });
+        } catch (MqttException e) {
+            Log.d("MainActivity", "not tried");
+
+            e.printStackTrace();
+        }
+    }
+    public void subscribe(@NonNull MqttAndroidClient client,
+                          @NonNull final String topic, int qos) throws MqttException {
+        IMqttToken token = client.subscribe(topic, qos);
+        token.setActionCallback(new IMqttActionListener() {
+
+            @Override
+            public void onSuccess(IMqttToken iMqttToken) {
+                Log.d("TAG", "Subscribe Successfully " + topic);
+            }
+
+            @Override
+            public void onFailure(IMqttToken iMqttToken, Throwable throwable) {
+                Log.e("TAG", "Subscribe Failed " + topic);
+            }
+        });
     }
 
     @Override
