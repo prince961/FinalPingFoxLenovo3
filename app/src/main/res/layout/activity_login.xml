@@ -61,10 +61,9 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="163dp"
-            app:colorScheme="dark"
-            app:buttonSize="wide"
             android:onClick="googleLogin"
-            />
+            app:buttonSize="wide"
+            app:colorScheme="dark" />
 
         <TextView
             android:id="@+id/RegisterText"
@@ -85,7 +84,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="13dp"
-            android:onClick="RegisterText"
+            android:onClick="tagline"
             android:text="Home Automation Experts"
             android:textAllCaps="false"
             android:textSize="14sp"

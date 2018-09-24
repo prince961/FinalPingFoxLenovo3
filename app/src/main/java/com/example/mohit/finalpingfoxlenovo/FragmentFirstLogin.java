@@ -1,7 +1,9 @@
 package com.example.mohit.finalpingfoxlenovo;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -46,6 +48,7 @@ public class FragmentFirstLogin extends Fragment {
     private DatabaseReference databaseReference;
     FirebaseDatabase database;
     Location currentLocation;
+    SharedPreferences sharedPreferences;
 
 
     @Nullable
@@ -56,6 +59,8 @@ public class FragmentFirstLogin extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
         databaseReference = database.getReference();
+        sharedPreferences = getContext().getSharedPreferences("UserSP", Context.MODE_PRIVATE);
+
 
         ETphoneNumber = (EditText) myView.findViewById(R.id.Etphone);
         ETAddress = (EditText) myView.findViewById(R.id.EtAddress);
@@ -206,6 +211,9 @@ public class FragmentFirstLogin extends Fragment {
         localUser.setLongitude(currentLocation.getLongitude());
         localUser.setBhk(BHK);
         databaseReference.child("users").child(firebaseUser.getUid()).setValue(localUser);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("NewUser",false);
+        editor.commit();
         Intent intent = new Intent(getContext(), Main2Activity.class);
         startActivity(intent);
 

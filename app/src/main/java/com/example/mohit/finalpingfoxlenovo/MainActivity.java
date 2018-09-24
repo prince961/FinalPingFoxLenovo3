@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "new devices can be added by pressing this button", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -214,15 +214,13 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_login) {
             fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentFirstLogin()).commit();
             // Handle the camera action
-        }else if (id == R.id.offline_mode) {
+        }else if (id == R.id.nav_offline) {
             fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentOfflineMode()).commit();
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_online_mode) {
+            fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentDeviceControl()).commit();
 
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

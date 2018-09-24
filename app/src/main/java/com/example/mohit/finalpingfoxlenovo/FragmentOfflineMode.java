@@ -76,7 +76,7 @@ public class FragmentOfflineMode extends Fragment {
                 //URL url = new URL("http://192.168.0.105/cm?cmnd=power%20toggle");
 
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setConnectTimeout(100);
+                conn.setConnectTimeout(500);
                 conn.setRequestMethod("GET");
                 int responseCode;
 
@@ -190,7 +190,7 @@ public class FragmentOfflineMode extends Fragment {
                     String prefix = ipString.substring(0, ipString.lastIndexOf(".") + 1);
                     Log.d(TAG, "prefix: " + prefix);
 
-                    for (int i = 1; i < 120; i++) {
+                    for (int i = 200; i < 250; i++) {
 
                         String testIp = prefix + String.valueOf(i);
                         Log.d(TAG, "testip: " + testIp);

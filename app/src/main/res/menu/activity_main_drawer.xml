@@ -6,30 +6,19 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_login"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Login" />
+            android:icon="@drawable/ic_menu_camera"
+            android:title="User Detais" />
 
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:id="@+id/nav_online_mode"
+            android:icon="@drawable/ic_menu_send"
+            android:title="Online Mode" />
         <item
-            android:id="@+id/offline_mode"
-            android:icon="@drawable/ic_menu_manage"
+            android:id="@+id/nav_offline"
+            android:icon="@drawable/ic_menu_share"
             android:title="Offline Mode" />
     </group>
 
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>
+
 
 </menu>

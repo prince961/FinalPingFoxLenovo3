@@ -180,6 +180,12 @@ public class LoginActivity extends AppCompatActivity {
                 .setAction("Action", null).show();
     }
 
+    public void tagline(View view) {
+        //only for offline controls
+        Intent intent = new Intent(this,MainActivity.class);
+        startActivity(intent);
+    }
+
    /* public void googleLogin(View view) {
         Log.w("ClickListner", "button pressed");
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
