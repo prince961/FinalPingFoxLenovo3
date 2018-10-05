@@ -190,7 +190,7 @@ public class FragmentOfflineMode extends Fragment {
                     String prefix = ipString.substring(0, ipString.lastIndexOf(".") + 1);
                     Log.d(TAG, "prefix: " + prefix);
 
-                    for (int i = 200; i < 250; i++) {
+                    for (int i = 100; i < 250; i++) {
 
                         String testIp = prefix + String.valueOf(i);
                         Log.d(TAG, "testip: " + testIp);

@@ -66,8 +66,8 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "new devices can be added by pressing this button", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Snackbar.make(view, "new devices can be added by pressing this button", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentRoomList()).commit();
             }
         });
 

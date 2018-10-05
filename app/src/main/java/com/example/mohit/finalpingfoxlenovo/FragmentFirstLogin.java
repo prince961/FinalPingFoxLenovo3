@@ -214,7 +214,7 @@ public class FragmentFirstLogin extends Fragment {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean("NewUser",false);
         editor.commit();
-        Intent intent = new Intent(getContext(), Main2Activity.class);
+        Intent intent = new Intent(getContext(), MainActivity.class);
         startActivity(intent);
 
 
