@@ -2,6 +2,7 @@ package com.example.mohit.finalpingfoxlenovo;
 
 import android.app.LauncherActivity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,11 +20,13 @@ public class RoomListAdapter extends RecyclerView.Adapter <RoomListAdapter.ViewH
     private ArrayList<Room> roomList ;
     private Context context;
     private FragmentManager fragmentManager ;
+    SharedPreferences sharedPreferences ;
 
     public  RoomListAdapter (ArrayList<Room> CroomList, Context context, FragmentManager fragmentManager){
         this.roomList = CroomList;
         this.context = context;
         this.fragmentManager = fragmentManager;
+        sharedPreferences = context.getSharedPreferences("UserSP", Context.MODE_PRIVATE);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -56,8 +59,10 @@ public class RoomListAdapter extends RecyclerView.Adapter <RoomListAdapter.ViewH
         holder.baseLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentOfflineMode()).commit();
-
+                SharedPreferences.Editor spEditor = sharedPreferences.edit();
+                spEditor.putString("AddDeviceInRoom",roomList.get(position).getName());
+                spEditor.apply();
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentAddDeviceInRoom()).commit();
                 Toast.makeText(context, "you have selcted"+roomList.get(position).getName(), Toast.LENGTH_SHORT).show();
             }
         });
