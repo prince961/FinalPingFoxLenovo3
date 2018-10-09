@@ -42,7 +42,7 @@ public class FragmentAddDeviceInRoom extends Fragment {
     InetAddress pingFoxIP;
     Button toggleButton;
     ImageView deviceStatusImage;
-    String SdeviceStatus = "abc";
+    String deviceName = "abc";
 
     @Nullable
     @Override
@@ -114,7 +114,7 @@ public class FragmentAddDeviceInRoom extends Fragment {
                 Log.i("custom_check", "The values received in the store part are as follows:");
                 Log.i("rever", line);
                 Log.i("response_code", Integer.toString(responseCode));
-                SdeviceStatus = jsonObject.getString("POWER");
+                deviceName = jsonObject.getString("Module");
 
 
 
@@ -130,15 +130,24 @@ public class FragmentAddDeviceInRoom extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if (SdeviceStatus.equals("ON")){
+            if (deviceName.equals("7 (Sonoff 4CH)")){
+                String pingFoxDeviceName = getPingFoxDeviceName("7 (Sonoff 4CH)");
 
                 deviceStatusImage.setImageResource(R.drawable.bulb_on);
             }
-            if (SdeviceStatus.equals("OFF")){
+            if (deviceName.equals("OFF")){
 
                 deviceStatusImage.setImageResource(R.drawable.bulb_off);
             }
         }
+    }
+
+    private String getPingFoxDeviceName(String s) {
+        String pingFoxDeviceName = null;
+        if (s.equals("7 (Sonoff 4CH)")){
+            pingFoxDeviceName = "Pingfox quatro";
+        }
+        return pingFoxDeviceName;
     }
 
 
@@ -191,12 +200,12 @@ public class FragmentAddDeviceInRoom extends Fragment {
                     String prefix = ipString.substring(0, ipString.lastIndexOf(".") + 1);
                     Log.d(TAG, "prefix: " + prefix);
 
-                    for (int i = 1; i < 250; i++) {
+                    for (int i = 100; i < 250; i++) {
 
                         String testIp = prefix + String.valueOf(i);
                         Log.d(TAG, "testip: " + testIp);
                         pingFoxIP = InetAddress.getByName(testIp);
-                        boolean reachable = pingFoxIP.isReachable(100);
+                        boolean reachable = pingFoxIP.isReachable(150);
                         //Log.d(TAG, "testip: " + testIp + "isreachable- "+reachable);
                         String hostName = pingFoxIP.getCanonicalHostName();
                         Log.d(TAG, "testip: " + testIp + "isreachable- " + reachable + ", host-" + hostName);
@@ -235,12 +244,13 @@ public class FragmentAddDeviceInRoom extends Fragment {
             super.onPostExecute(aBoolean);
             progDailog.dismiss();
             if (aBoolean){
-                Toast.makeText(getContext(),"Found pingfox device on network",Toast.LENGTH_SHORT).show();
-                if (SdeviceStatus.equals("ON")){
-
+                //Toast.makeText(getContext(),"Found pingfox device on network",Toast.LENGTH_SHORT).show();
+                if (deviceName.equals("7 (Sonoff 4CH)")){
+                    String pingFoxDeviceName = getPingFoxDeviceName("7 (Sonoff 4CH)");
+                    Toast.makeText(noClueContext, pingFoxDeviceName+" detected", Toast.LENGTH_SHORT).show();
                     deviceStatusImage.setImageResource(R.drawable.bulb_on);
                 }
-                if (SdeviceStatus.equals("OFF")){
+                if (deviceName.equals("OFF")){
 
                     deviceStatusImage.setImageResource(R.drawable.bulb_off);
                 }
@@ -289,17 +299,20 @@ public class FragmentAddDeviceInRoom extends Fragment {
                 pingfoxIp = true;
                 //userLocalStore.SetUserLoggedIn(true);
                 String line;
+
                 while ((line = reader.readLine()) != null) {
                     //Read till there is something available
                     sb.append(line + "\n");     //Reading and saving line by line - not all at once
                 }
                 line = sb.toString();           //Saving complete data received in string, you can do it differently
-                JSONObject jsonObject = new JSONObject(line);
+                String jsonString = line.split("=")[1];
+                Log.i("jsonString",jsonString);
+                JSONObject jsonObject = new JSONObject(jsonString);
                 //Just check to the values received in Logcat
                 Log.i("custom_check", "The values received in the store part are as follows:");
                 Log.i("rever", line);
                 Log.i("response_code", Integer.toString(responseCode));
-                SdeviceStatus = jsonObject.getString("POWER");
+                deviceName = jsonObject.getString("Module");
 
 
 
