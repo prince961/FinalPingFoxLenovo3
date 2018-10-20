@@ -43,6 +43,7 @@ public class FragmentAddDeviceInRoom extends Fragment {
     Button toggleButton;
     ImageView deviceStatusImage;
     String deviceName = "abc";
+    private ArrayList<String> AlreadyAddedMacAddress;
 
     @Nullable
     @Override
@@ -95,6 +96,38 @@ public class FragmentAddDeviceInRoom extends Fragment {
                 responseCode = conn.getResponseCode();
 
                 Log.i("response_code", Integer.toString(responseCode));
+                if (responseCode == 200){
+                    URL url1 = new URL("http:/" + pingFoxIP + "/cm?cmnd=power%20toggle");
+                    Log.i("URL1", String.valueOf(url1));
+                    //URL url = new URL("http://192.168.0.105/cm?cmnd=power%20toggle");
+
+                    HttpURLConnection conn1 = (HttpURLConnection) url.openConnection();
+                    conn.setConnectTimeout(500);
+                    conn.setRequestMethod("GET");
+
+                    conn.setDoOutput(true);
+
+                    //conn.setRequestProperty("Content-Type", "application/json");
+                    //int responseCode  = conn.getResponseCode();
+                    OutputStreamWriter writer1 = new OutputStreamWriter(conn.getOutputStream());
+                    String body1 = new String();
+                    writer.write(body1);
+                    //Sending the data to the server - This much is enough to send data to server
+                    //But to read the response of the server, you will have to implement the procedure below
+                    writer.flush();
+                    StringBuilder sb = new StringBuilder();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                    //userLocalStore.SetUserLoggedIn(true);
+                    String line1;
+                    while ((line1 = reader.readLine()) != null) {
+                        //Read till there is something available
+                        sb.append(line1 + "\n");     //Reading and saving line by line - not all at once
+                    }
+                    line1 = sb.toString();
+                    Log.i("line1",line1);
+
+                }
 
 
                 // Create an InputStream in order to extract the response object
@@ -112,9 +145,11 @@ public class FragmentAddDeviceInRoom extends Fragment {
                 JSONObject jsonObject = new JSONObject(line);
                 //Just check to the values received in Logcat
                 Log.i("custom_check", "The values received in the store part are as follows:");
-                Log.i("rever", line);
+                Log.i("revert", line);
                 Log.i("response_code", Integer.toString(responseCode));
                 deviceName = jsonObject.getString("Module");
+
+
 
 
 

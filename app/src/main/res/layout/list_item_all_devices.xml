@@ -4,10 +4,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/listItemAllDevicesBaseLayout">
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/DeviceName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Device 1"
@@ -16,16 +17,16 @@
         tools:layout_editor_absoluteY="3dp" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/RoomName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Room 1"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
+        app:layout_constraintTop_toBottomOf="@+id/DeviceName"
         tools:layout_editor_absoluteX="16dp" />
 
     <Switch
-        android:id="@+id/switch1"
+        android:id="@+id/DeviceSwitch"
         android:layout_width="79dp"
         android:layout_height="40dp"
         android:layout_marginStart="104dp"
@@ -34,28 +35,28 @@
         android:textOn="On"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.716"
-        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintStart_toEndOf="@+id/DeviceName"
         tools:layout_editor_absoluteY="8dp" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/timerImg"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/switch1"
-        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintEnd_toStartOf="@+id/DeviceSwitch"
+        app:layout_constraintStart_toEndOf="@+id/DeviceName"
         app:srcCompat="@android:drawable/ic_lock_idle_alarm"
         tools:layout_editor_absoluteY="8dp" />
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/ConnectionImg"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/switch1"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintEnd_toStartOf="@+id/DeviceSwitch"
+        app:layout_constraintStart_toEndOf="@+id/timerImg"
         app:srcCompat="@drawable/perm_scan_wifi_grey_192x192"
         tools:layout_editor_absoluteY="8dp" />
 
