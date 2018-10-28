@@ -2,6 +2,7 @@ package com.example.mohit.finalpingfoxlenovo;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
@@ -44,6 +45,7 @@ public class FragmentAddDeviceInRoom extends Fragment {
     ImageView deviceStatusImage;
     String deviceName = "abc";
     private ArrayList<String> AlreadyAddedMacAddress;
+    SharedPreferences sharedPreferences;
 
     @Nullable
     @Override
@@ -53,7 +55,7 @@ public class FragmentAddDeviceInRoom extends Fragment {
         FragmentAddDeviceInRoom.NetworkSniffTask task = new FragmentAddDeviceInRoom.NetworkSniffTask(getContext());
         task.execute();
         toggleButton = (Button) myView.findViewById(R.id.toggleButton);
-
+        sharedPreferences = getContext().getSharedPreferences("UserSP", Context.MODE_PRIVATE);
         toggleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -254,7 +256,7 @@ public class FragmentAddDeviceInRoom extends Fragment {
                             if (pingfoxIP == true){
                                 Log.i("pingfoxIP",testIp);
                                 bPingFoxConnected = true;
-                                return true;
+                                return bPingFoxConnected;
                             }
                         }
 
@@ -264,7 +266,7 @@ public class FragmentAddDeviceInRoom extends Fragment {
                 Log.e(TAG, "Well that's not good....", t);
                 progDailog.dismiss();
                 bPingFoxConnected = false;
-                return true;
+                return bPingFoxConnected;
 
 
             }
@@ -280,15 +282,11 @@ public class FragmentAddDeviceInRoom extends Fragment {
             progDailog.dismiss();
             if (aBoolean){
                 //Toast.makeText(getContext(),"Found pingfox device on network",Toast.LENGTH_SHORT).show();
-                if (deviceName.equals("7 (Sonoff 4CH)")){
-                    String pingFoxDeviceName = getPingFoxDeviceName("7 (Sonoff 4CH)");
-                    Toast.makeText(noClueContext, pingFoxDeviceName+" detected", Toast.LENGTH_SHORT).show();
-                    deviceStatusImage.setImageResource(R.drawable.bulb_on);
-                }
-                if (deviceName.equals("OFF")){
+                String pingFoxDeviceName = getPingFoxDeviceName(deviceName);
+                Toast.makeText(noClueContext, pingFoxDeviceName+" detected", Toast.LENGTH_SHORT).show();
+                //Configure the module
 
-                    deviceStatusImage.setImageResource(R.drawable.bulb_off);
-                }
+
             }else {
                 Toast.makeText(getContext(),"No pingfox device found on network",Toast.LENGTH_SHORT).show();
             }
@@ -390,6 +388,39 @@ public class FragmentAddDeviceInRoom extends Fragment {
         }
         return pingfoxIp;
 
+
+    }
+
+    class sendConfigrationDetailsToModule extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progDailog = ProgressDialog.show(getContext(),"Configuring","please wait");
+            progDailog.setMessage("Saving your settings on the device");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(true);
+            progDailog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            //Getting the required MqttDetails
+            String host = "m11.cloudmqtt.com";
+            int port = 15121;
+            String client = "Android"; //DVES_%06X
+            String userName = "rdqlgagy";
+            String password = "V4-dlT_EKFEe";
+            String topic = "emailId/Room/device";
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progDailog.dismiss();
+        }
 
     }
 }
