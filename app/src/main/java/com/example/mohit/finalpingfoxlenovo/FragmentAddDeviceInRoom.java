@@ -34,6 +34,7 @@ import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class FragmentAddDeviceInRoom extends Fragment {
 
@@ -44,6 +45,7 @@ public class FragmentAddDeviceInRoom extends Fragment {
     Button toggleButton;
     ImageView deviceStatusImage;
     String deviceName = "abc";
+    String uniqueDeviceName ;
     private ArrayList<String> AlreadyAddedMacAddress;
     SharedPreferences sharedPreferences;
 
@@ -54,129 +56,8 @@ public class FragmentAddDeviceInRoom extends Fragment {
         deviceStatusImage =(ImageView) myView.findViewById(R.id.DeviceStatusImage);
         FragmentAddDeviceInRoom.NetworkSniffTask task = new FragmentAddDeviceInRoom.NetworkSniffTask(getContext());
         task.execute();
-        toggleButton = (Button) myView.findViewById(R.id.toggleButton);
         sharedPreferences = getContext().getSharedPreferences("UserSP", Context.MODE_PRIVATE);
-        toggleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentAddDeviceInRoom.TogglePower togglePower = new FragmentAddDeviceInRoom.TogglePower();
-                togglePower.execute();
-            }
-        });
-
-
         return myView;
-    }
-
-    class TogglePower extends AsyncTask<Void, Void, Void> {
-
-
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                URL url = new URL("http:/" + pingFoxIP + "/cm?cmnd=power%20toggle");
-                Log.i("URL", String.valueOf(url));
-                //URL url = new URL("http://192.168.0.105/cm?cmnd=power%20toggle");
-
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setConnectTimeout(500);
-                conn.setRequestMethod("GET");
-                int responseCode;
-
-                conn.setDoOutput(true);
-
-                //conn.setRequestProperty("Content-Type", "application/json");
-                //int responseCode  = conn.getResponseCode();
-                OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
-                String body = new String();
-                writer.write(body);
-                //Sending the data to the server - This much is enough to send data to server
-                //But to read the response of the server, you will have to implement the procedure below
-                writer.flush();
-                Log.i("custom_check", body);
-                responseCode = conn.getResponseCode();
-
-                Log.i("response_code", Integer.toString(responseCode));
-                if (responseCode == 200){
-                    URL url1 = new URL("http:/" + pingFoxIP + "/cm?cmnd=power%20toggle");
-                    Log.i("URL1", String.valueOf(url1));
-                    //URL url = new URL("http://192.168.0.105/cm?cmnd=power%20toggle");
-
-                    HttpURLConnection conn1 = (HttpURLConnection) url.openConnection();
-                    conn.setConnectTimeout(500);
-                    conn.setRequestMethod("GET");
-
-                    conn.setDoOutput(true);
-
-                    //conn.setRequestProperty("Content-Type", "application/json");
-                    //int responseCode  = conn.getResponseCode();
-                    OutputStreamWriter writer1 = new OutputStreamWriter(conn.getOutputStream());
-                    String body1 = new String();
-                    writer.write(body1);
-                    //Sending the data to the server - This much is enough to send data to server
-                    //But to read the response of the server, you will have to implement the procedure below
-                    writer.flush();
-                    StringBuilder sb = new StringBuilder();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-                    //userLocalStore.SetUserLoggedIn(true);
-                    String line1;
-                    while ((line1 = reader.readLine()) != null) {
-                        //Read till there is something available
-                        sb.append(line1 + "\n");     //Reading and saving line by line - not all at once
-                    }
-                    line1 = sb.toString();
-                    Log.i("line1",line1);
-
-                }
-
-
-                // Create an InputStream in order to extract the response object
-                //InputStream is = conn.getInputStream();
-                StringBuilder sb = new StringBuilder();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-                //userLocalStore.SetUserLoggedIn(true);
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    //Read till there is something available
-                    sb.append(line + "\n");     //Reading and saving line by line - not all at once
-                }
-                line = sb.toString();           //Saving complete data received in string, you can do it differently
-                JSONObject jsonObject = new JSONObject(line);
-                //Just check to the values received in Logcat
-                Log.i("custom_check", "The values received in the store part are as follows:");
-                Log.i("revert", line);
-                Log.i("response_code", Integer.toString(responseCode));
-                deviceName = jsonObject.getString("Module");
-
-
-
-
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if (deviceName.equals("7 (Sonoff 4CH)")){
-                String pingFoxDeviceName = getPingFoxDeviceName("7 (Sonoff 4CH)");
-
-                deviceStatusImage.setImageResource(R.drawable.bulb_on);
-            }
-            if (deviceName.equals("OFF")){
-
-                deviceStatusImage.setImageResource(R.drawable.bulb_off);
-            }
-        }
     }
 
     private String getPingFoxDeviceName(String s) {
@@ -283,8 +164,13 @@ public class FragmentAddDeviceInRoom extends Fragment {
             if (aBoolean){
                 //Toast.makeText(getContext(),"Found pingfox device on network",Toast.LENGTH_SHORT).show();
                 String pingFoxDeviceName = getPingFoxDeviceName(deviceName);
+                //set a nique devicename for a unique topic
+                setUniqueDeviceName(pingFoxDeviceName);
+
                 Toast.makeText(noClueContext, pingFoxDeviceName+" detected", Toast.LENGTH_SHORT).show();
                 //Configure the module
+                FragmentAddDeviceInRoom.sendConfigrationDetailsToModule task = new FragmentAddDeviceInRoom.sendConfigrationDetailsToModule();
+                task.execute();
 
 
             }else {
@@ -293,6 +179,13 @@ public class FragmentAddDeviceInRoom extends Fragment {
 
         }
     }
+
+    private void setUniqueDeviceName(String pingFoxDeviceName) {
+        //need to develope a method which will giv the device a unique name, to avoid conflict of topic name
+        uniqueDeviceName = pingFoxDeviceName;
+
+    }
+
     private Boolean checkIfpingFox(InetAddress address, Context context) {
         Boolean pingfoxIp = false ;
 
@@ -412,7 +305,19 @@ public class FragmentAddDeviceInRoom extends Fragment {
             String client = "Android"; //DVES_%06X
             String userName = "rdqlgagy";
             String password = "V4-dlT_EKFEe";
-            String topic = "emailId/Room/device";
+
+            //device login password will be a random number for security reasons
+            int pingFoxPassword = new Random().nextInt(100000)+ 10000;
+            Log.i("randomPassword", String.valueOf(pingFoxPassword));
+
+            //String topic = "emailId/Room/device";
+            String room = sharedPreferences.getString("AddDeviceInRoom","no room seected");
+            String email = sharedPreferences.getString("LoggedInUserEmail","no email recieved");
+            String topic = email+"/"+room+"/"+uniqueDeviceName;
+            Log.i("topic",topic);
+
+
+
             return null;
         }
 

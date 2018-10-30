@@ -126,6 +126,8 @@ public class LoginActivity extends AppCompatActivity {
                                 // The user is new, show them a fancy intro screen!
                                 editor.putBoolean("UserLoggedIn",true);
                                 editor.putBoolean("NewUser",true);
+                                String email = firebaseUser.getEmail();
+                                editor.putString("LoggedInUserEmail",email);
                                 Log.d("LoggedInUser","new user");
                                 editor.commit();
                                 mGoogleSignInClient.signOut();
@@ -140,6 +142,8 @@ public class LoginActivity extends AppCompatActivity {
                                 editor.putBoolean("UserLoggedIn",true);
                                 editor.putBoolean("NewUser",false);
                                 editor.putString("UserName","Mohit");
+                                String email = firebaseUser.getEmail();
+                                editor.putString("LoggedInUserEmail",email);
                                 editor.commit();
                                 //fragmentManager.beginTransaction().replace(R.id.content_frame, new LoginFragment()).commit();
                                 mGoogleSignInClient.signOut();
