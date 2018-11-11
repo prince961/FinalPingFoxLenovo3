@@ -15,7 +15,7 @@ public class FragmentyAllDevices extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        myView = inflater.inflate(R.layout.fragment_all_devices, container, false);
+        myView = inflater.inflate(R.layout.list_item_room_hs, container, false);
         return myView;
     }
 }

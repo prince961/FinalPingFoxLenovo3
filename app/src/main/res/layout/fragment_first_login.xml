@@ -16,11 +16,24 @@
             android:layout_marginTop="13dp"
             app:srcCompat="@mipmap/ic_launcher_foreground" />
 
+        <TextView
+            android:id="@+id/HiText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="0dp"
+            android:textAlignment="center"
+            android:ems="10"
+            android:inputType="number"
+            android:text="Hi Customer, welcome to the pingfox eco-system" />
+
+
         <EditText
             android:id="@+id/Etphone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView"
+            android:layout_below="@+id/HiText"
             android:layout_centerHorizontal="true"
             android:ems="10"
             android:hint="Phone Number"

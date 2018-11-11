@@ -215,7 +215,8 @@ public class MainActivity extends AppCompatActivity
             fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentFirstLogin()).commit();
             // Handle the camera action
         }else if (id == R.id.nav_offline) {
-            fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentOfflineMode()).commit();
+            //trial
+            fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentyAllDevices()).commit();
 
         } else if (id == R.id.nav_online_mode) {
             fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentDeviceControl()).commit();
