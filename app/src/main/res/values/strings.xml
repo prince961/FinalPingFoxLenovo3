@@ -9,5 +9,8 @@
     <string name="app_name">Pingfox</string>
     <string name="register_here"><u>Register here</u></string>
     <string name="action_logout">Logout</string>
+    <string name="tnc_privacy1"> <a href='http://pingfox.in/tnc.html'>Terms of Service</a></string>
+    <string name="tnc_privacy">By continuing, you are indicating that you accept our <a href='http://pingfox.in/tnc.html'>Terms of Service</a> and<a href='http://pingfox.in/privacy.html'> Privacy Policy.</a> "
+    </string>
 
 </resources>
