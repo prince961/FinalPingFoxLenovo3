@@ -11,6 +11,7 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -44,7 +45,9 @@ public class LoginActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     TextView termsPrivacy;
-    ProgressDialog progressDialog;
+    ProgressBar progressBar;
+    LinearLayout progressLayout;
+    TextView progressText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,16 +63,14 @@ public class LoginActivity extends AppCompatActivity {
         gButton = (SignInButton) findViewById(R.id.googleSignInBtn);
         termsPrivacy = (TextView) findViewById(R.id.termsPrivacy);
         termsPrivacy.setMovementMethod(LinkMovementMethod.getInstance());
+        progressBar = (ProgressBar)findViewById(R.id.progressBar) ;
+        progressLayout = (LinearLayout)findViewById(R.id.progressLayout) ;
+        progressText = (TextView)findViewById(R.id.progressText) ;
         gButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.w("ClickListner", "button pressed");
-                progressDialog = new ProgressDialog(getApplicationContext());
-                progressDialog.setMessage("Searching for pingfox Device on your network");
-                progressDialog.setIndeterminate(false);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.setCancelable(true);
-                progressDialog.show();
+                progressLayout.setVisibility(View.VISIBLE);
                 Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                 startActivityForResult(signInIntent, RC_SIGN_IN);
                 Log.w("ClickListner", "Data sent");
