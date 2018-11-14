@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     SharedPreferences sharedPreferences ;
     FragmentManager fragmentManager = getSupportFragmentManager();
     GoogleSignInClient mGoogleSignInClient;
+    private FusedLocationProviderClient fusedLocationProviderClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +85,11 @@ public class MainActivity extends AppCompatActivity
 
         if (UserLoggedIn){
             //Boolean newUser = true;
+
             Boolean newUser = sharedPreferences.getBoolean("NewUser",false);
             if (newUser) {
+                //Check permission
+                checkLocationPermission();
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentFirstLogin()).commit();
                 Log.i("oncreated", "starting first login fragment");
             }else {
@@ -101,6 +105,103 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void checkLocationPermission() {
+       fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        //getLocationPermission();
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.i("Location", "permission not granted");
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                Log.i("Explanation Location", "permission not granted");
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+                Log.i("LocationNoExplanation", "permission not granted");
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            Log.i("Location", "permission already granted");
+            Task location = fusedLocationProviderClient.getLastLocation();
+            location.addOnCompleteListener(new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if (task.isSuccessful()) {
+                        Log.d("location task", "successful");
+                        Location currentLocation = (Location) task.getResult();
+                        Log.d("latitude", String.valueOf(currentLocation.getLatitude()));
+                        Log.d("Longitude", String.valueOf(currentLocation.getLongitude()));
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("FirstLatitude",String.valueOf(currentLocation.getLatitude()));
+                        editor.putString("FirstLongitude",String.valueOf(currentLocation.getLongitude()));
+                        editor.apply();
+                    } else {
+                        Log.d("location task", "failed");
+                    }
+                }
+            });
+        }
+    }
+
+    //Permission Request Handler
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+
+        Log.i("permissions", "granted1");
+        switch (requestCode) {
+
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                Log.i("permissions", "granted");
+
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.i("permissions", "granted");
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        //this method is useless, this is just here to satisfy the error by the getLastLocation method
+                        return;
+                    }
+                    Task location = fusedLocationProviderClient.getLastLocation();
+                    location.addOnCompleteListener(new OnCompleteListener() {
+                        @Override
+                        public void onComplete(@NonNull Task task) {
+                            if (task.isSuccessful()) {
+                                Log.d("location task", "successful");
+                                Location currentLocation = (Location) task.getResult();
+                                Log.d("latitude", String.valueOf(currentLocation.getLatitude()));
+                                Log.d("Longitude", String.valueOf(currentLocation.getLongitude()));
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("FirstLatitude",String.valueOf(currentLocation.getLatitude()));
+                                editor.putString("FirstLongitude",String.valueOf(currentLocation.getLongitude()));
+                                editor.apply();
+
+                            } else {
+                                Log.d("location task", "failed");
+                            }
+                        }
+                    });
+                } else {
+                    Log.d("location task", "failed");
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
+    }
 
 
     private void connectWithCloudMQTT() {
@@ -167,7 +268,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+
         }
     }
 
@@ -227,6 +328,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /*
     public void locationAccess(View view) {
         Log.d("CheckBox ", "pressed1");
         FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.getApplicationContext());
@@ -270,5 +372,5 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-    }
+    }*/
 }
