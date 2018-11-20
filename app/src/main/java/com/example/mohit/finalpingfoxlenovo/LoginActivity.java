@@ -158,6 +158,7 @@ public class LoginActivity extends AppCompatActivity {
                                 mGoogleSignInClient.signOut();
                                 Intent intent = new Intent(getBaseContext(), MainActivity.class);
                                 startActivity(intent);
+                                finish();
                                 //fragmentManager.beginTransaction().replace(R.id.content_frame, new LoginFragment()).commit();
 
 
@@ -174,6 +175,7 @@ public class LoginActivity extends AppCompatActivity {
                                 mGoogleSignInClient.signOut();
                                 Intent intent = new Intent(getBaseContext(), MainActivity.class);
                                 startActivity(intent);
+                                finish();
 
                                 //Log.d("phoneNumbber", Objects.requireNonNull(user.getPhoneNumber()));
 

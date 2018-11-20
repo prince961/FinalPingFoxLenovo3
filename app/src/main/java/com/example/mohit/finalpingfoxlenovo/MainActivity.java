@@ -95,8 +95,8 @@ public class MainActivity extends AppCompatActivity
             }else {
                 //connectWithCloudMQTT();
                 //oldUser
-                Log.i("oncreated", "swtarting fragment to control device");
-                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentDeviceControl()).commit();
+                Log.i("oncreated", "starting fragment to control device");
+                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHomeScreen()).commit();
             }
         }else {
             Log.i("LoggedInUser", String.valueOf(UserLoggedIn));
