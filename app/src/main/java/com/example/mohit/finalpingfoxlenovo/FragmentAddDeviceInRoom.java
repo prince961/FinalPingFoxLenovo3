@@ -314,7 +314,7 @@ public class FragmentAddDeviceInRoom extends Fragment {
             String room = sharedPreferences.getString("AddDeviceInRoom","no room seected");
             String email = sharedPreferences.getString("LoggedInUserEmail","no email recieved");
             String topic = uniqueDeviceName;
-            String fullTopic = email+"/"+room+"/%25topic%25/";
+            String fullTopic = email+"/"+room+"/"+uniqueDeviceName;
             topic = topic.replace(" ","_");
             fullTopic = fullTopic.replace(" ","_");
             Log.i("topic",topic);
@@ -358,7 +358,7 @@ public class FragmentAddDeviceInRoom extends Fragment {
                         sb.append(line + "\n");     //Reading and saving line by line - not all at once
                     }
                     line = sb.toString();           //Saving complete data received in string, you can do it differently
-                    String jsonString = line.split("=")[2];
+                    String jsonString = line.split("=")[1];
                     Log.i("jsonString",jsonString);
                     JSONObject jsonObject = new JSONObject(jsonString);
                     //Just check to the values received in Logcat
@@ -367,6 +367,63 @@ public class FragmentAddDeviceInRoom extends Fragment {
                     Log.i("response_code", Integer.toString(responseCode));
                     String revertFullTopic = jsonObject.getString("FullTopic");
                     Log.i("revertFullTopic",revertFullTopic);
+
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            //Setting up password for te devicem so tat it cannot be scanned again
+            try {
+                URL url = new URL("http:/" + pingFoxIP + "/cm?cmnd=WebPassword%20123456");
+                Log.i("URL", String.valueOf(url));
+                //URL url = new URL("http://192.168.0.105/cm?cmnd=power%20toggle");
+
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setConnectTimeout(100);
+                conn.setRequestMethod("GET");
+                int responseCode;
+
+                conn.setDoOutput(true);
+
+                //conn.setRequestProperty("Content-Type", "application/json");
+                //int responseCode  = conn.getResponseCode();
+                OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+                String body = new String();
+                writer.write(body);
+                //Sending the data to the server - This much is enough to send data to server
+                //But to read the response of the server, you will have to implement the procedure below
+                writer.flush();
+                Log.i("custom_check", body);
+                responseCode = conn.getResponseCode();
+
+                Log.i("response_code", Integer.toString(responseCode));
+
+
+
+                // Create an InputStream in order to extract the response object
+                //InputStream is = conn.getInputStream();
+                StringBuilder sb = new StringBuilder();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    //Read till there is something available
+                    sb.append(line + "\n");     //Reading and saving line by line - not all at once
+                }
+                line = sb.toString();           //Saving complete data received in string, you can do it differently
+                String jsonString = line.split("=")[1];
+                Log.i("jsonString",jsonString);
+                JSONObject jsonObject = new JSONObject(jsonString);
+                //Just check to the values received in Logcat
+                Log.i("custom_check", "The values received in the store part are as follows:");
+                Log.i("rever", line);
+                Log.i("response_code", Integer.toString(responseCode));
+                String revertFullTopic = jsonObject.getString("FullTopic");
+                Log.i("revertFullTopic",revertFullTopic);
 
 
 
