@@ -422,10 +422,6 @@ public class FragmentAddDeviceInRoom extends Fragment {
                 Log.i("custom_check", "The values received in the store part are as follows:");
                 Log.i("revert", line);
                 Log.i("response_code", Integer.toString(responseCode));
-                String revertFullTopic = jsonObject.getString("FullTopic");
-                Log.i("revertFullTopic",revertFullTopic);
-
-
 
             } catch (IOException e) {
                 e.printStackTrace();
