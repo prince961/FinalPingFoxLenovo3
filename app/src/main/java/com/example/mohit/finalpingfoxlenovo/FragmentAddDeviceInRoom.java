@@ -420,7 +420,7 @@ public class FragmentAddDeviceInRoom extends Fragment {
                 JSONObject jsonObject = new JSONObject(jsonString);
                 //Just check to the values received in Logcat
                 Log.i("custom_check", "The values received in the store part are as follows:");
-                Log.i("rever", line);
+                Log.i("revert", line);
                 Log.i("response_code", Integer.toString(responseCode));
                 String revertFullTopic = jsonObject.getString("FullTopic");
                 Log.i("revertFullTopic",revertFullTopic);
