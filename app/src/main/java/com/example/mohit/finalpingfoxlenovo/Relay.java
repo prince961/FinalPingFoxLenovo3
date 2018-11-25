@@ -5,10 +5,10 @@ public class Relay {
     private Boolean relayOn;
     int channel;
 
-    public Relay(String relayName, Boolean relayOn, int channel) {
-        relayName = relayName;
-        relayOn = relayOn;
-        channel = channel;
+    public Relay(String relayName1, Boolean relayOn1, int channel1) {
+        relayName = relayName1;
+        relayOn = relayOn1;
+        channel = channel1;
     }
 
     public String getRelayName() {

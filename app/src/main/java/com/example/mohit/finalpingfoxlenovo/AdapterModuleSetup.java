@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,6 @@ public class AdapterModuleSetup extends RecyclerView.Adapter<AdapterModuleSetup.
     public AdapterModuleSetup(ArrayList<Relay> relayList, Context context) {
 
         this.relayList = relayList;
-
         this.context = context;
     }
 
@@ -36,7 +36,8 @@ public class AdapterModuleSetup extends RecyclerView.Adapter<AdapterModuleSetup.
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
 
         Relay relay = relayList.get(position);
-        viewHolder.deviceName.setHint("Device "+position+1);
+        viewHolder.deviceName.setHint(relay.getRelayName());
+        Log.i("relayName",relay.getRelayName());
         Boolean relayOn = relay.getRelayOn();
         if (relayOn){
             viewHolder.pingText.setTextColor(Color.parseColor("#53FF6D"));

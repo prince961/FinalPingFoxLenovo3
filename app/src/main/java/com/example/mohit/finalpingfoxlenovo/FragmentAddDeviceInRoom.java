@@ -13,6 +13,7 @@ import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,6 +49,9 @@ public class FragmentAddDeviceInRoom extends Fragment {
     String uniqueDeviceName ;
     private ArrayList<String> AlreadyAddedMacAddress;
     SharedPreferences sharedPreferences;
+    int numberRelays;
+    private ArrayList<Relay> relayArrayList = new ArrayList<Relay>();
+    private RecyclerView recyclerView;
 
     @Nullable
     @Override
@@ -64,6 +68,7 @@ public class FragmentAddDeviceInRoom extends Fragment {
         String pingFoxDeviceName = null;
         if (s.equals("7 (Sonoff 4CH)")){
             pingFoxDeviceName = "Pingfox quatro";
+            numberRelays = 4;
         }
         return pingFoxDeviceName;
     }
@@ -429,6 +434,72 @@ public class FragmentAddDeviceInRoom extends Fragment {
                 e.printStackTrace();
             }
 
+            //get power state of the relays
+            try {
+                URL url = new URL("http:/" + pingFoxIP + "/cm?user=admin&password=123456&cmnd=status%2011");
+                Log.i("URL", String.valueOf(url));
+                //URL url = new URL("http://192.168.0.105/cm?cmnd=power%20toggle");
+
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setConnectTimeout(300);
+                conn.setRequestMethod("GET");
+                int responseCode;
+
+                conn.setDoOutput(true);
+
+                //conn.setRequestProperty("Content-Type", "application/json");
+                //int responseCode  = conn.getResponseCode();
+                OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+                String body = new String();
+                writer.write(body);
+                //Sending the data to the server - This much is enough to send data to server
+                //But to read the response of the server, you will have to implement the procedure below
+                writer.flush();
+                Log.i("custom_check", body);
+                responseCode = conn.getResponseCode();
+
+                Log.i("response_code", Integer.toString(responseCode));
+
+
+
+                // Create an InputStream in order to extract the response object
+                //InputStream is = conn.getInputStream();
+                StringBuilder sb = new StringBuilder();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    //Read till there is something available
+                    sb.append(line + "\n");     //Reading and saving line by line - not all at once
+                }
+                line = sb.toString();           //Saving complete data received in string, you can do it differently
+                String jsonString = line.split("=")[1];
+                Log.i("jsonString",jsonString);
+                JSONObject jsonObject1 = new JSONObject(jsonString);
+                //Just check to the values received in Logcat
+                Log.i("custom_check", "The values received in the store part are as follows:");
+                Log.i("revert", line);
+                Log.i("response_code", Integer.toString(responseCode));
+                JSONObject jsonObject2 = jsonObject1.getJSONObject("StatusSTS");
+
+                for (int i = 0; i < numberRelays; i++){
+                    int k = i+1;
+                    String powerState = jsonObject2.getString("POWER"+k);
+                    if (powerState.equals("ON")){
+                        relayArrayList.add(new Relay("Device "+k,true,k));
+                    }else {
+                        relayArrayList.add(new Relay("Device "+k,false,k));
+                    }
+                    Log.i("PowerState"+k,powerState);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
 
 
             return null;
@@ -438,6 +509,7 @@ public class FragmentAddDeviceInRoom extends Fragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             progDailog.dismiss();
+
         }
 
     }
