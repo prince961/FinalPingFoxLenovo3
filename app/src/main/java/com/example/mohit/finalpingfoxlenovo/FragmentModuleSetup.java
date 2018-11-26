@@ -382,6 +382,7 @@ public class FragmentModuleSetup extends Fragment {
             }
 
             //Setting up password for te devicem so tat it cannot be scanned again
+            /*
             try {
                 URL url = new URL("http:/" + pingFoxIP + "/cm?cmnd=WebPassword%20123456");
                 Log.i("URL", String.valueOf(url));
@@ -431,7 +432,7 @@ public class FragmentModuleSetup extends Fragment {
                 e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
-            }
+            }*/
 
             //get power state of the relays
             try {
@@ -506,7 +507,7 @@ public class FragmentModuleSetup extends Fragment {
             super.onPostExecute(aVoid);
             progDailog.dismiss();
             Log.i("ArraySize", String.valueOf(relayArrayList.size()));
-            adapter = new AdapterModuleSetup(relayArrayList,getContext());
+            adapter = new AdapterModuleSetup(relayArrayList,getContext(),pingFoxIP);
             recyclerView.setAdapter(adapter);
         }
     }
