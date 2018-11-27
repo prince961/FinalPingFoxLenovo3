@@ -4,11 +4,13 @@ public class Relay {
     private String relayName;
     private Boolean relayOn;
     int channel;
+    private String commonRelayTopic;
 
-    public Relay(String relayName, Boolean relayOn, int channel) {
+    public Relay(String relayName, Boolean relayOn, int channel, String commonRelayTopic) {
         this.relayName = relayName;
         this.relayOn = relayOn;
         this.channel = channel;
+        this.commonRelayTopic = commonRelayTopic;
     }
 
     public String getRelayName() {

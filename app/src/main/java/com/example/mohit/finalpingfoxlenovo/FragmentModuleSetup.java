@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -44,8 +45,7 @@ public class FragmentModuleSetup extends Fragment {
     private Boolean bPingFoxConnected = false;
     ProgressDialog progDailog;
     InetAddress pingFoxIP;
-    Button toggleButton;
-    ImageView deviceStatusImage;
+
     String deviceName = "abc";
     String uniqueDeviceName;
     private ArrayList<String> AlreadyAddedMacAddress;
@@ -54,6 +54,7 @@ public class FragmentModuleSetup extends Fragment {
     private ArrayList<Relay> relayArrayList ;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
+    private Button submitButton;
 
     @Nullable
     @Override
@@ -66,7 +67,31 @@ public class FragmentModuleSetup extends Fragment {
         FragmentModuleSetup.NetworkSniffTask task = new FragmentModuleSetup.NetworkSniffTask(getContext());
         task.execute();
         sharedPreferences = getContext().getSharedPreferences("UserSP", Context.MODE_PRIVATE);
+        submitButton = (Button) myView.findViewById(R.id.buttonRegisterPingFoxDecvice);
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RegisterDevice();
+
+            }
+        });
         return myView;
+    }
+
+    private void RegisterDevice() {
+        //getDetails
+        for (int i = 0; i<relayArrayList.size();i++){
+
+            View row = recyclerView.getLayoutManager().findViewByPosition(i);
+            EditText deviceNameET = row.findViewById(R.id.DeviceNameET);
+            String channelDeviceName = deviceNameET.getText().toString();
+            Log.i("device name",channelDeviceName);
+
+        }
+
+        //MoveDataToFirebase and sharedPrefrence
+
+
     }
 
     private String getPingFoxDeviceName(String s) {
@@ -293,6 +318,8 @@ public class FragmentModuleSetup extends Fragment {
 
     class sendConfigrationDetailsToModule extends AsyncTask<Void, Void, Void> {
 
+        String fullTopic;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -321,7 +348,7 @@ public class FragmentModuleSetup extends Fragment {
             String room = sharedPreferences.getString("AddDeviceInRoom", "no room seected");
             String email = sharedPreferences.getString("LoggedInUserEmail", "no email recieved");
             String topic = uniqueDeviceName;
-            String fullTopic = email + "/" + room + "/" + uniqueDeviceName;
+            fullTopic = email + "/" + room + "/" + uniqueDeviceName;
             topic = topic.replace(" ", "_");
             fullTopic = fullTopic.replace(" ", "_");
             Log.i("topic", topic);
@@ -485,9 +512,9 @@ public class FragmentModuleSetup extends Fragment {
                     int k = i + 1;
                     String powerState = jsonObject2.getString("POWER" + k);
                     if (powerState.equals("ON")) {
-                        relayArrayList.add(new Relay("Device " + k, true, k));
+                        relayArrayList.add(new Relay("Device " + k, true, k,fullTopic));
                     } else {
-                        relayArrayList.add(new Relay("Device " + k, false, k));
+                        relayArrayList.add(new Relay("Device " + k, false, k,fullTopic));
                     }
                     Log.i("PowerState" + k, powerState);
                 }

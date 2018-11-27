@@ -63,6 +63,7 @@ public class AdapterModuleSetup extends RecyclerView.Adapter<AdapterModuleSetup.
         else {
             viewHolder.pingText.setTextColor(Color.parseColor("#272727"));
         }
+
         viewHolder.pingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,8 +71,6 @@ public class AdapterModuleSetup extends RecyclerView.Adapter<AdapterModuleSetup.
                 //1. Toggle the relay
                 AdapterModuleSetup.TogglePower task = new AdapterModuleSetup.TogglePower(position,viewHolder);
                 task.execute();
-
-
 
             }
         });
