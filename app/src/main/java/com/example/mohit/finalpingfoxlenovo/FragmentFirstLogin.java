@@ -39,7 +39,7 @@ public class FragmentFirstLogin extends Fragment {
     View myView;
     private String phoneNumber;
     private String Address;
-    private Long BHK;
+    private String BHKId;
     private EditText ETphoneNumber, ETAddress;
     private CheckBox locationAccess;
     private Spinner ShouseConfig;
@@ -79,7 +79,8 @@ public class FragmentFirstLogin extends Fragment {
             public void onClick(View view) {
                 phoneNumber = ETphoneNumber.getText().toString();
                 Address = ETAddress.getText().toString();
-                BHK = ShouseConfig.getSelectedItemId();
+                BHKId = ShouseConfig.getSelectedItem().toString();
+                Log.i("BHKId",BHKId);
                 FragmentManager fragmentManager = getFragmentManager();
 
                 firebaseUser = mAuth.getCurrentUser();
@@ -88,7 +89,7 @@ public class FragmentFirstLogin extends Fragment {
                 localUser.setPhone(phoneNumber);
                 localUser.setLatitude(Double.parseDouble(sharedPreferences.getString("FirstLatitude","1")));
                 localUser.setLongitude(Double.parseDouble(sharedPreferences.getString("FirstLongitude","1")));
-                localUser.setBhk(BHK);
+                localUser.setBhk(BHKId);
                 databaseReference.child("users").child(firebaseUser.getUid()).setValue(localUser);
                 Log.i("Submit Data", "swtarting fragment to control device");
                 SharedPreferences.Editor editor = sharedPreferences.edit();

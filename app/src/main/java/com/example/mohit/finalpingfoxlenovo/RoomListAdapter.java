@@ -61,6 +61,7 @@ public class RoomListAdapter extends RecyclerView.Adapter <RoomListAdapter.ViewH
             public void onClick(View view) {
                 SharedPreferences.Editor spEditor = sharedPreferences.edit();
                 spEditor.putString("AddDeviceInRoom",roomList.get(position).getName());
+
                 spEditor.apply();
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentModuleSetup()).commit();
                 Toast.makeText(context, "you have selcted"+roomList.get(position).getName(), Toast.LENGTH_SHORT).show();

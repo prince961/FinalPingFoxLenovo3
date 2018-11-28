@@ -6,6 +6,11 @@ public class Relay {
     int channel;
     private String commonRelayTopic;
 
+    public Relay(){
+        //required for firebase
+    }
+
+
     public Relay(String relayName, Boolean relayOn, int channel, String commonRelayTopic) {
         this.relayName = relayName;
         this.relayOn = relayOn;

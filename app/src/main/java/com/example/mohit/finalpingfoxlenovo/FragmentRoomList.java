@@ -35,11 +35,13 @@ public class FragmentRoomList extends Fragment {
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        Room masterbedroom = new Room("Master Bedroom","Bedroom");
-        Room bathroomAttached = new Room("Bathroom","Bathroom");
-        Room kitchen = new Room("Kitchen", "Kitchen");
-        Room livingRoom  = new Room("LivingRoom", "LivingRoom");
-        Room lobby = new Room("Lobby","Lobby");
+        ArrayList<PingFoxDevice> deviceList = new ArrayList<>();
+
+        Room masterbedroom = new Room("Master Bedroom","Bedroom",deviceList);
+        Room bathroomAttached = new Room("Bathroom","Bathroom",deviceList);
+        Room kitchen = new Room("Kitchen", "Kitchen",deviceList);
+        Room livingRoom  = new Room("LivingRoom", "LivingRoom",deviceList);
+        Room lobby = new Room("Lobby","Lobby",deviceList);
 
         roomArrayList = new ArrayList<Room>();
         roomArrayList.add(masterbedroom);

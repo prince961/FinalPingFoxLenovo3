@@ -5,17 +5,19 @@ import java.util.ArrayList;
 public class PingFoxDevice {
 
     private String PingFoxDeviceName;
-    private String MacAddress;
+    private String fullTopic;
     private int DeviceChannels;
     private Boolean InternetConnection;
     private Boolean LocalConnection;
-    private ArrayList<Relay> Devices;
+    private ArrayList<Relay> devices;
 
-    public PingFoxDevice(String pingFoxDeviceName, String macAddress, int deviceChannels, Boolean internetConnection, Boolean localConnection) {
-        PingFoxDeviceName = pingFoxDeviceName;
-        MacAddress = macAddress;
-        DeviceChannels = deviceChannels;
-        InternetConnection = internetConnection;
-        LocalConnection = localConnection;
+    public PingFoxDevice(){
+        //required for firebse
+    }
+
+    public PingFoxDevice(String pingFoxDeviceName, String fullTopic,ArrayList<Relay> devices) {
+        this.PingFoxDeviceName = pingFoxDeviceName;
+        this.devices = devices;
+        this.fullTopic = fullTopic;
     }
 }

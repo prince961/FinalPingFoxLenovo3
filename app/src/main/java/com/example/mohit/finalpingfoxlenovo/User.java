@@ -15,6 +15,7 @@ public class User {
     public String bhk;
     public double latitude,longitude;
     public ArrayList<Room> roomsArray = new ArrayList<>();
+    private ArrayList<PingFoxDevice> pingFoxDeviceArrayList= new ArrayList<>();
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
@@ -24,6 +25,7 @@ public class User {
         this.fullName = fullName;
         this.email = email;
     }
+
 
     public void setPhone(String phone) {
         this.phone = phone;
@@ -40,22 +42,23 @@ public class User {
     public void setAddress(String address) {
         this.address = address;
     }
-    public void setBhk(Long Lbhk) {
-        Room masterbedroom = new Room("Master Bedroom","Bedroom");
-        Room bathroomAttached = new Room("Bathroom","Bathroom");
-        Room kitchen = new Room("Kitchen", "Kitchen");
-        Room livingRoom  = new Room("LivingRoom", "LivingRoom");
-        Room lobby = new Room("Lobby","Lobby");
-        Room balcony = new Room("Balcony","Balcony");
-        Room Bedroom1 = new Room("Bedroom 1","Bedroom");
-        Room Bedroom2 = new Room("Bedroom 2","Bedroom");
-        Room Bedroom3 = new Room("Bedroom 3","Bedroom");
-        Room bathroomCommon = new Room("Bathroom Common","Bathroom");
-        Room bathroom2 = new Room("Bathroom 2","Bathroom");
+
+    public void setBhk(String Lbhk) {
+        Room masterbedroom = new Room("Master Bedroom","Bedroom",pingFoxDeviceArrayList);
+        Room bathroomAttached = new Room("Bathroom","Bathroom",pingFoxDeviceArrayList);
+        Room kitchen = new Room("Kitchen", "Kitchen",pingFoxDeviceArrayList);
+        Room livingRoom  = new Room("LivingRoom", "LivingRoom",pingFoxDeviceArrayList);
+        Room lobby = new Room("Lobby","Lobby",pingFoxDeviceArrayList);
+        Room balcony = new Room("Balcony","Balcony",pingFoxDeviceArrayList);
+        Room Bedroom1 = new Room("Bedroom 1","Bedroom",pingFoxDeviceArrayList);
+        Room Bedroom2 = new Room("Bedroom 2","Bedroom",pingFoxDeviceArrayList);
+        Room Bedroom3 = new Room("Bedroom 3","Bedroom",pingFoxDeviceArrayList);
+        Room bathroomCommon = new Room("Bathroom Common","Bathroom",pingFoxDeviceArrayList);
+        Room bathroom2 = new Room("Bathroom 2","Bathroom",pingFoxDeviceArrayList);
 
 
 
-        if (Lbhk.intValue() == 0){
+        if (Lbhk.equals("1 Bhk")){
             this.bhk = "1 BHK";
             this.roomsArray.add(masterbedroom);
             this.roomsArray.add(bathroomAttached);
@@ -64,7 +67,7 @@ public class User {
             this.roomsArray.add(bathroomCommon);
 
         }
-        if (Lbhk.intValue() == 1){
+        if (Lbhk.equals("2 Bhk")){
             this.bhk = "2 BHK";
             this.roomsArray.add(masterbedroom);
             this.roomsArray.add(bathroomAttached);
@@ -72,9 +75,8 @@ public class User {
             this.roomsArray.add(livingRoom);
             this.roomsArray.add(bathroomCommon);
         }
-        if (Lbhk.intValue() == 2){
+        if (Lbhk.equals("3 Bhk")){
             this.bhk = "3 BHK";
-            this.bhk = "2 BHK";
             this.roomsArray.add(masterbedroom);
             this.roomsArray.add(bathroomAttached);
             this.roomsArray.add(kitchen);
@@ -82,7 +84,7 @@ public class User {
             this.roomsArray.add(bathroomCommon);
 
         }
-        if (Lbhk.intValue() == 3){
+        if (Lbhk.equals("4 Bhk")){
             this.bhk = "4 BHK";
             this.roomsArray.add(masterbedroom);
             this.roomsArray.add(bathroomAttached);
@@ -90,7 +92,7 @@ public class User {
             this.roomsArray.add(livingRoom);
             this.roomsArray.add(bathroomCommon);
         }
-        if (Lbhk.intValue() == 4){
+        if (Lbhk.equals("Custom")){
             this.bhk = "Custom";
             this.roomsArray.add(masterbedroom);
             this.roomsArray.add(bathroomAttached);
@@ -99,5 +101,19 @@ public class User {
             this.roomsArray.add(bathroomCommon);
         }
 
+
+
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public ArrayList<Room> getRoomsArray() {
+        return roomsArray;
     }
 }

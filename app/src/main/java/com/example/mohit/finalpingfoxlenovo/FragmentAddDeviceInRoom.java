@@ -52,6 +52,7 @@ public class FragmentAddDeviceInRoom extends Fragment {
     int numberRelays;
     private ArrayList<Relay> relayArrayList = new ArrayList<Relay>();
     private RecyclerView recyclerView;
+    String fullTopic;
 
     @Nullable
     @Override
@@ -319,7 +320,7 @@ public class FragmentAddDeviceInRoom extends Fragment {
             String room = sharedPreferences.getString("AddDeviceInRoom","no room seected");
             String email = sharedPreferences.getString("LoggedInUserEmail","no email recieved");
             String topic = uniqueDeviceName;
-            String fullTopic = email+"/"+room+"/"+uniqueDeviceName;
+            fullTopic = email+"/"+room+"/"+uniqueDeviceName;
             topic = topic.replace(" ","_");
             fullTopic = fullTopic.replace(" ","_");
             Log.i("topic",topic);
@@ -486,9 +487,9 @@ public class FragmentAddDeviceInRoom extends Fragment {
                     int k = i+1;
                     String powerState = jsonObject2.getString("POWER"+k);
                     if (powerState.equals("ON")){
-                        relayArrayList.add(new Relay("Device "+k,true,k));
+                        relayArrayList.add(new Relay("Device "+k,true,k,fullTopic));
                     }else {
-                        relayArrayList.add(new Relay("Device "+k,false,k));
+                        relayArrayList.add(new Relay("Device "+k,false,k,fullTopic));
                     }
                     Log.i("PowerState"+k,powerState);
                 }

@@ -25,6 +25,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,6 +63,11 @@ public class FragmentModuleSetup extends Fragment {
     private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private Button submitButton;
+    private DatabaseReference databaseReference;
+    FirebaseDatabase firebaseDatabase ;
+    private FirebaseAuth mAuth;
+    FirebaseUser firebaseUser;
+    String fullTopic;
 
     @Nullable
     @Override
@@ -67,6 +80,10 @@ public class FragmentModuleSetup extends Fragment {
         FragmentModuleSetup.NetworkSniffTask task = new FragmentModuleSetup.NetworkSniffTask(getContext());
         task.execute();
         sharedPreferences = getContext().getSharedPreferences("UserSP", Context.MODE_PRIVATE);
+        mAuth = FirebaseAuth.getInstance();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference();
+        firebaseUser = mAuth.getCurrentUser();
         submitButton = (Button) myView.findViewById(R.id.buttonRegisterPingFoxDecvice);
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,6 +92,7 @@ public class FragmentModuleSetup extends Fragment {
 
             }
         });
+
         return myView;
     }
 
@@ -84,10 +102,37 @@ public class FragmentModuleSetup extends Fragment {
 
             View row = recyclerView.getLayoutManager().findViewByPosition(i);
             EditText deviceNameET = row.findViewById(R.id.DeviceNameET);
-            String channelDeviceName = deviceNameET.getText().toString();
-            Log.i("device name",channelDeviceName);
+            String relayDeviceName = deviceNameET.getText().toString();
+            Relay relay = relayArrayList.get(i);
+            relay.setRelayName(relayDeviceName);
+            Log.i("device name",relayDeviceName);
 
         }
+        PingFoxDevice pingFoxDevice = new PingFoxDevice(uniqueDeviceName,fullTopic,relayArrayList);
+
+        DatabaseReference userDataBaseRef =databaseReference.child("users").child(firebaseUser.getUid()).getRef();
+        userDataBaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                String fullName = user.getFullName();
+                ArrayList<Room> roomList = user.getRoomsArray();
+                Log.i("phone", fullName);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+
+        //Log.i("example",userDataBase);
+
+
+
+
+
+
 
         //MoveDataToFirebase and sharedPrefrence
 
@@ -318,7 +363,7 @@ public class FragmentModuleSetup extends Fragment {
 
     class sendConfigrationDetailsToModule extends AsyncTask<Void, Void, Void> {
 
-        String fullTopic;
+
 
         @Override
         protected void onPreExecute() {
