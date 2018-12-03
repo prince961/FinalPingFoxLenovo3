@@ -69,6 +69,7 @@ public class FragmentModuleSetup extends Fragment {
     FirebaseUser firebaseUser;
     String fullTopic;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -92,7 +93,7 @@ public class FragmentModuleSetup extends Fragment {
 
             }
         });
-
+        final Controller controller = (Controller) getActivity().getApplicationContext();
         return myView;
     }
 
@@ -108,34 +109,44 @@ public class FragmentModuleSetup extends Fragment {
             Log.i("device name",relayDeviceName);
 
         }
-        PingFoxDevice pingFoxDevice = new PingFoxDevice(uniqueDeviceName,fullTopic,relayArrayList);
 
-        DatabaseReference userDataBaseRef =databaseReference.child("users").child(firebaseUser.getUid()).getRef();
+        final Controller controller = (Controller) getActivity().getBaseContext();
+        User contollerUser =(User) controller.getUser();
+        ArrayList<Room> rooms = contollerUser.getRoomsArray();
+        String userFullName = contollerUser.getFullName();
+        Log.i("userFullName",userFullName);
+
+        final PingFoxDevice pingFoxDevice = new PingFoxDevice(uniqueDeviceName,fullTopic,relayArrayList);
+
+        final DatabaseReference userDataBaseRef =databaseReference.child("users").child(firebaseUser.getUid()).getRef();
         userDataBaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 String fullName = user.getFullName();
-                ArrayList<Room> roomList = user.getRoomsArray();
-                Log.i("phone", fullName);
+                ArrayList<Room> roomList = controller.getRoomList();
+                Log.i("fullName", fullName);
+
+                if (dataSnapshot.hasChild("PingfoxDeviceMap")){
+                    //read and write data
+
+                }else {
+
+
+                    //write data
+                    DatabaseReference pingfoxDeviceMapDataRef = databaseReference.child("users").child(firebaseUser.getUid()).child("PingfoxDeviceMap");
+                    //pingfoxDeviceMapDataRef.setValue()
+                }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 System.out.println("The read failed: " + databaseError.getCode());
             }
+
         });
 
-        //Log.i("example",userDataBase);
-
-
-
-
-
-
-
-        //MoveDataToFirebase and sharedPrefrence
-
+        
 
     }
 

@@ -58,6 +58,8 @@ public class FragmentFirstLogin extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        final Controller controller = (Controller) getActivity().getApplicationContext();
+
         myView = inflater.inflate(R.layout.fragment_first_login, container, false);
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
@@ -95,7 +97,9 @@ public class FragmentFirstLogin extends Fragment {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean("NewUser",false);
                 editor.apply();
+                controller.setUser(localUser);
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentDeviceControl()).commit();
+
                 //Intent intent = new Intent(getContext(), AddDeviceInRoom.class);
                 //startActivity(intent);
             }
@@ -103,13 +107,6 @@ public class FragmentFirstLogin extends Fragment {
 
         return myView;
     }
-
-
-
-
-
-
-
 
 
 }
