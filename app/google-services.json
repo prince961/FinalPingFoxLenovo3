@@ -31,22 +31,6 @@
           }
         },
         {
-          "client_id": "238979945096-02ckbi0cp76se2li0jh8i4rboh9ehnuq.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.mohit.finalpingfoxlenovo",
-            "certificate_hash": "ac2accd2098529d845d1905f4ebfcb9743651e25"
-          }
-        },
-        {
-          "client_id": "238979945096-u49co2l67tqhlevt09e9kgeih4gk50g1.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.mohit.finalpingfoxlenovo",
-            "certificate_hash": "b1af15be8f480fd761e514b4737a2d8091427266"
-          }
-        },
-        {
           "client_id": "238979945096-2vllvgf1rfru8v1d4j6d81ep9vff3lnq.apps.googleusercontent.com",
           "client_type": 3
         }

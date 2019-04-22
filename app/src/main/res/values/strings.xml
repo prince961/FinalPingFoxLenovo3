@@ -5,10 +5,11 @@
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">www.pingfox.in</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
     <string name="app_name">Pingfox</string>
     <string name="register_here"><u>Register here</u></string>
     <string name="action_logout">Logout</string>
+
+    <string name="action_settings">Settings</string>
     <string name="tnc_privacy1"> <a href='http://pingfox.in/tnc.html'>Terms of Service</a></string>
     <string name="tnc_privacy">By continuing, you are indicating that you accept our <a href='http://pingfox.in/tnc.html'>Terms of Service</a> and<a href='http://pingfox.in/privacy.html'> Privacy Policy.</a> "
     </string>

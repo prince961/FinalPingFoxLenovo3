@@ -60,7 +60,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="Ping"
-                    android:textColor="@color/place_autocomplete_prediction_secondary_text"
                     android:textSize="28sp"
                     android:textStyle="bold"
                     />
