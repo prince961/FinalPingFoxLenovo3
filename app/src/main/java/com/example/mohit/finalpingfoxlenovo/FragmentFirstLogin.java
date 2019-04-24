@@ -35,6 +35,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class FragmentFirstLogin extends Fragment {
     View myView;
     private String phoneNumber;
@@ -92,6 +95,7 @@ public class FragmentFirstLogin extends Fragment {
                 localUser.setLatitude(Double.parseDouble(sharedPreferences.getString("FirstLatitude","1")));
                 localUser.setLongitude(Double.parseDouble(sharedPreferences.getString("FirstLongitude","1")));
                 localUser.setBhk(BHKId);
+                String jsonBody = ConvertUserDetailsJson(localUser);
                 databaseReference.child("users").child(firebaseUser.getUid()).setValue(localUser);
                 Log.i("Submit Data", "swtarting fragment to control device");
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -106,6 +110,20 @@ public class FragmentFirstLogin extends Fragment {
         });
 
         return myView;
+    }
+
+    private String ConvertUserDetailsJson(User localUser) {
+        String body = null;
+        JSONObject bodyJson = new JSONObject();
+        try {
+            bodyJson.put("emailId",firebaseUser.getEmail());
+
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        Log.i("JsonBody",body);
+        return body;
+
     }
 
 
