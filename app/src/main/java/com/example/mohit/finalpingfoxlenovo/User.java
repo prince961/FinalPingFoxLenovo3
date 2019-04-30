@@ -12,6 +12,8 @@ public class User {
     public String email;
     public String phone;
     public String address;
+
+
     public String bhk;
     public double latitude,longitude;
     public ArrayList<Room> roomsArray = new ArrayList<>();
@@ -68,7 +70,6 @@ public class User {
 
         }
         if (Lbhk.equals("2 Bhk")){
-            this.bhk = "2 BHK";
             this.roomsArray.add(masterbedroom);
             this.roomsArray.add(bathroomAttached);
             this.roomsArray.add(kitchen);
@@ -76,7 +77,6 @@ public class User {
             this.roomsArray.add(bathroomCommon);
         }
         if (Lbhk.equals("3 Bhk")){
-            this.bhk = "3 BHK";
             this.roomsArray.add(masterbedroom);
             this.roomsArray.add(bathroomAttached);
             this.roomsArray.add(kitchen);
@@ -85,7 +85,6 @@ public class User {
 
         }
         if (Lbhk.equals("4 Bhk")){
-            this.bhk = "4 BHK";
             this.roomsArray.add(masterbedroom);
             this.roomsArray.add(bathroomAttached);
             this.roomsArray.add(kitchen);
@@ -116,4 +115,10 @@ public class User {
     public ArrayList<Room> getRoomsArray() {
         return roomsArray;
     }
+
+    public String getBhk() {
+        return bhk;
+    }
+
+
 }

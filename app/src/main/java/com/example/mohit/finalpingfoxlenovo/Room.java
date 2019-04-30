@@ -7,7 +7,8 @@ public class Room {
 
     private String name;
     private String type;
-    private ArrayList<PingFoxDevice> pingFoxDevice;
+    private int ID;
+    private ArrayList<PingFoxDevice> pingFoxDevices;
 
     public Room(){
         //required for firebase
@@ -16,12 +17,20 @@ public class Room {
     public Room(String name, String type, ArrayList<PingFoxDevice> pingFoxDeviceList) {
         this.name = name;
         this.type = type;
-        this.pingFoxDevice =  pingFoxDeviceList;
+        this.pingFoxDevices =  pingFoxDeviceList;
     }
 
 
     public String getName() {
         return name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public ArrayList<PingFoxDevice> getPingFoxDevices() {
+        return pingFoxDevices;
     }
 }
 

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,8 +36,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.net.URL;
+import java.util.ArrayList;
 
 public class FragmentFirstLogin extends Fragment {
     View myView;
@@ -95,7 +100,8 @@ public class FragmentFirstLogin extends Fragment {
                 localUser.setLatitude(Double.parseDouble(sharedPreferences.getString("FirstLatitude","1")));
                 localUser.setLongitude(Double.parseDouble(sharedPreferences.getString("FirstLongitude","1")));
                 localUser.setBhk(BHKId);
-                String jsonBody = ConvertUserDetailsJson(localUser);
+                JSONObject jsonBody = ConvertUserDetailsJson(localUser);
+                Log.i("JSONbody",jsonBody.toString());
                 databaseReference.child("users").child(firebaseUser.getUid()).setValue(localUser);
                 Log.i("Submit Data", "swtarting fragment to control device");
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -112,19 +118,70 @@ public class FragmentFirstLogin extends Fragment {
         return myView;
     }
 
-    private String ConvertUserDetailsJson(User localUser) {
-        String body = null;
+    private JSONObject ConvertUserDetailsJson(User localUser) {
         JSONObject bodyJson = new JSONObject();
+
+
+
         try {
             bodyJson.put("emailId",firebaseUser.getEmail());
+            bodyJson.put("phone",localUser.getPhone());
+            bodyJson.put("name",localUser.getFullName());
+            bodyJson.put("bhkId",localUser.getBhk());
+            JSONArray roomJsonArray = new JSONArray();
+
+            ArrayList<Room> roomsArray = localUser.getRoomsArray();
+            int roomArrayCount = localUser.getRoomsArray().size();
+            for (int l=0 ;l< roomArrayCount ; l++){
+                JSONObject roomJsonObject = new JSONObject();
+                Room room = roomsArray.get(l);
+                roomJsonObject.put("roomName",room.getName());
+                roomJsonObject.put("roomType",room.getType());
+                roomJsonObject.put("roomId",1);
+                ArrayList<PingFoxDevice> pingFoxDeviceArrayList = room.getPingFoxDevices();
+                JSONArray deviceJsonArray = new JSONArray();
+                for (int k=0 ;k< pingFoxDeviceArrayList.size() ; k++){
+                    PingFoxDevice pingFoxDevice = pingFoxDeviceArrayList.get(k);
+                    JSONObject pingFoxDeviceJSONobject = new JSONObject();
+                    pingFoxDeviceJSONobject.put("pingfoxDeviceName",pingFoxDevice.getPingFoxDeviceName());
+                    pingFoxDeviceJSONobject.put("fullTopic",pingFoxDevice.getFullTopic());
+                    pingFoxDeviceJSONobject.put("deviceChannels",pingFoxDevice.getDeviceChannels());
+                    pingFoxDeviceJSONobject.put("internetConnection",pingFoxDevice.getInternetConnection());
+                    pingFoxDeviceJSONobject.put("localConnection",pingFoxDevice.getLocalConnection());
+                    pingFoxDeviceJSONobject.put("macAddress",pingFoxDevice.getMacAddress());
+                    ArrayList<Relay> devices = pingFoxDevice.getDevices();
+                    JSONArray devicesJSONarray = new JSONArray();
+                    for (int i=0 ;i< devices.size() ; i++){
+                        Relay relay = devices.get(i);
+                        JSONObject relayJSOnobject = new JSONObject();
+                        relayJSOnobject.put("relayName",relay.getRelayName());
+                        relayJSOnobject.put("relayOn",relay.getRelayOn());
+                        relayJSOnobject.put("commonRelayTopic",pingFoxDevice.getFullTopic());
+                        relayJSOnobject.put("channel",relay.getChannel());
+                        deviceJsonArray.put(relayJSOnobject);
+
+                    }
+                    pingFoxDeviceJSONobject.put("deviceList",deviceJsonArray);
+                    deviceJsonArray.put(pingFoxDeviceJSONobject);
+                }
+                roomJsonObject.put("pingFoxDeviceList",deviceJsonArray);
+                roomJsonArray.put(roomJsonObject);
+            }
+
+
+            bodyJson.put("roomArray",roomJsonArray);
+
+
 
         }catch (JSONException e){
             e.printStackTrace();
         }
-        Log.i("JsonBody",body);
-        return body;
+        //Log.i("JsonBody",bodyJson.toString());
+        return bodyJson;
 
     }
+
+
 
 
 }
