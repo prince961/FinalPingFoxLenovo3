@@ -40,6 +40,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -60,6 +64,7 @@ public class FragmentFirstLogin extends Fragment {
     SharedPreferences sharedPreferences;
     TextView hiText ;
     FirebaseUser firebaseUser;
+    String mongoUSerJSONbody ;
 
 
     @Nullable
@@ -101,6 +106,7 @@ public class FragmentFirstLogin extends Fragment {
                 localUser.setLongitude(Double.parseDouble(sharedPreferences.getString("FirstLongitude","1")));
                 localUser.setBhk(BHKId);
                 JSONObject jsonBody = ConvertUserDetailsJson(localUser);
+                mongoUSerJSONbody = jsonBody.toString();
                 Log.i("JSONbody",jsonBody.toString());
                 databaseReference.child("users").child(firebaseUser.getUid()).setValue(localUser);
                 Log.i("Submit Data", "swtarting fragment to control device");
@@ -108,6 +114,7 @@ public class FragmentFirstLogin extends Fragment {
                 editor.putBoolean("NewUser",false);
                 editor.apply();
                 controller.setUser(localUser);
+                new sendDatatoServer().execute();
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentDeviceControl()).commit();
 
                 //Intent intent = new Intent(getContext(), AddDeviceInRoom.class);
@@ -181,6 +188,43 @@ public class FragmentFirstLogin extends Fragment {
 
     }
 
+    public class sendDatatoServer extends AsyncTask<Void, Void, Void> {
+
+
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try{
+                URL url = new URL("http://18.221.190.166:4000/api/ninjas");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setConnectTimeout(5000);
+                conn.setRequestMethod("POST");
+                conn.setDoOutput(true);
+                conn.setRequestProperty("Content-Type", "application/json");
+
+                String body = mongoUSerJSONbody;
+                Log.i("BODY",body);
+                OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+                writer.write(body);
+                writer.flush();
+                StringBuilder sb = new StringBuilder();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    //Read till there is something available
+                    sb.append(line + "\n");     //Reading and saving line by line - not all at once
+                }
+                line = sb.toString();
+
+                Log.i("orderMEssage",line);
+                int responseCode = conn.getResponseCode();
+                Log.i("responseCode", String.valueOf(responseCode));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
 
 
 
