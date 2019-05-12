@@ -59,9 +59,11 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         sharedPreferences = getApplicationContext().getSharedPreferences("UserSP", Context.MODE_PRIVATE);
+        Controller controller = (Controller) getApplicationContext();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -93,8 +95,9 @@ public class MainActivity extends AppCompatActivity
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentFirstLogin()).commit();
                 Log.i("oncreated", "starting first login fragment");
             }else {
-                //connectWithCloudMQTT();
+                //connectWithCloudMQTT();`
                 //oldUser
+                //initialiseController
                 Log.i("oncreated", "starting fragment to control device");
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHomeScreen()).commit();
             }

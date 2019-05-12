@@ -46,21 +46,47 @@ public class AdapterModuleSetup extends RecyclerView.Adapter<AdapterModuleSetup.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-       View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_configre_channels,parent,false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_configre_channels,parent,false);
         return new ViewHolder(v);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+    public Relay getRelayOnPosition(int position){
+        return relayList.get(position);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int position) {
 
         Relay relay = relayList.get(position);
+        String str = viewHolder.deviceName.getText().toString();
+        Log.i("stringValueRelayName",str+position);
         viewHolder.deviceName.setHint(relay.getRelayName());
-        Log.i("relayName",relay.getRelayName());
-        Boolean relayOn = relay.getRelayOn();
-        if (relayOn){
-            viewHolder.pingText.setTextColor(Color.parseColor("#53FF6D"));
+
+
+        if (str.equals(""))
+        {
+            // This should work!
+        }else {
+            relay.setRelayName(str);
         }
-        else {
+
+        //relay.setRelayName(str);
+        Log.i("relayName", relay.getRelayName());
+
+        Boolean relayOn = relay.getRelayOn();
+        if (relayOn) {
+            viewHolder.pingText.setTextColor(Color.parseColor("#53FF6D"));
+        } else {
             viewHolder.pingText.setTextColor(Color.parseColor("#272727"));
         }
 
@@ -71,11 +97,17 @@ public class AdapterModuleSetup extends RecyclerView.Adapter<AdapterModuleSetup.
                 //1. Toggle the relay
                 AdapterModuleSetup.TogglePower task = new AdapterModuleSetup.TogglePower(position,viewHolder);
                 task.execute();
+                setRelayNames();
 
             }
         });
 
     }
+
+    private void setRelayNames() {
+
+    }
+
     private class TogglePower extends AsyncTask<Void, Void, Void> {
 
         int position;
@@ -85,6 +117,8 @@ public class AdapterModuleSetup extends RecyclerView.Adapter<AdapterModuleSetup.
             this.position = position;
             this.viewHolder = viewHolder;
         }
+
+
 
 
         @Override
@@ -145,6 +179,10 @@ public class AdapterModuleSetup extends RecyclerView.Adapter<AdapterModuleSetup.
                     relay.setRelayOn(false);
                     //relay.setRelayName("bulb");
                 }
+
+                //store all the relay names
+
+
 
 
             } catch (IOException e) {

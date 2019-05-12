@@ -1,5 +1,6 @@
 package com.example.mohit.finalpingfoxlenovo;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -45,6 +47,7 @@ import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Random;
 
 public class FragmentModuleSetup extends Fragment {
@@ -77,7 +80,7 @@ public class FragmentModuleSetup extends Fragment {
         relayArrayList = new ArrayList<>();
         recyclerView = (RecyclerView) myView.findViewById(R.id.moduleRelayRV);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         FragmentModuleSetup.NetworkSniffTask task = new FragmentModuleSetup.NetworkSniffTask(getContext());
         task.execute();
         sharedPreferences = getContext().getSharedPreferences("UserSP", Context.MODE_PRIVATE);
@@ -89,6 +92,7 @@ public class FragmentModuleSetup extends Fragment {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                hideKeyboardFrom(getContext(),myView);
                 RegisterDevice();
 
             }
@@ -97,26 +101,54 @@ public class FragmentModuleSetup extends Fragment {
         return myView;
     }
 
+    public static void hideKeyboardFrom(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+
     private void RegisterDevice() {
         //getDetails
         for (int i = 0; i<relayArrayList.size();i++){
+            String deviceName;
+            Log.i("size", String.valueOf(recyclerView.getAdapter().getItemCount()));
 
             View row = recyclerView.getLayoutManager().findViewByPosition(i);
-            EditText deviceNameET = row.findViewById(R.id.DeviceNameET);
-            String relayDeviceName = deviceNameET.getText().toString();
-            Relay relay = relayArrayList.get(i);
-            relay.setRelayName(relayDeviceName);
-            Log.i("device name",relayDeviceName);
+
+            //Log.i("rowData",row.)
+            try{
+
+                EditText deviceNameET = row.findViewById(R.id.DeviceNameET);
+                Log.i("StringFromET",deviceNameET.getText().toString());
+                deviceName = deviceNameET.getText().toString();
+            }catch (NullPointerException e){
+                e.printStackTrace();
+                deviceName = relayArrayList.get(i).getRelayName();
+
+            }
+            // EditText deviceNameET = row.findViewById(R.id.DeviceNameET);
+            //Log.i("StringFromET",deviceNameET.getText().toString());
+            //String relayDeviceName = relayArrayList.get(i).getRelayName();
+            //Relay relay = relayArrayList.get(i);
+            //relay.setRelayName(relayDeviceName);
+            Log.i("device name",deviceName);
 
         }
 
-        final Controller controller = (Controller) getActivity().getBaseContext();
+        final Controller controller = (Controller) getActivity().getApplicationContext();
         User contollerUser =(User) controller.getUser();
-        ArrayList<Room> rooms = contollerUser.getRoomsArray();
-        String userFullName = contollerUser.getFullName();
-        Log.i("userFullName",userFullName);
-
+        ArrayList<Room> roomArrayList = contollerUser.getRoomsArray();
+        String positionRoomString = sharedPreferences.getString("AddDeviceInRoomPosition",null);
+        Log.i("positionRoom", String.valueOf(positionRoomString));
+        int positionRoom = Integer.parseInt(positionRoomString);
+        Log.i("roomListlength", contollerUser.getFullName());
+        Room selectedRoom = roomArrayList.get(positionRoom);
         final PingFoxDevice pingFoxDevice = new PingFoxDevice(uniqueDeviceName,fullTopic,relayArrayList);
+        selectedRoom.getPingFoxDevices().add(pingFoxDevice);
+        String testDataCapturedRelayName = contollerUser.getRoomsArray().get(positionRoom).getPingFoxDevices().get(0).getDevices().get(0).getRelayName();
+        Log.i("testDataRelayName",testDataCapturedRelayName);
+
+
 
         final DatabaseReference userDataBaseRef =databaseReference.child("users").child(firebaseUser.getUid()).getRef();
         userDataBaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -124,7 +156,7 @@ public class FragmentModuleSetup extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 String fullName = user.getFullName();
-                ArrayList<Room> roomList = controller.getRoomList();
+                //ArrayList<Room> roomList = controller.getRoomList();
                 Log.i("fullName", fullName);
 
                 if (dataSnapshot.hasChild("PingfoxDeviceMap")){
@@ -146,7 +178,7 @@ public class FragmentModuleSetup extends Fragment {
 
         });
 
-        
+
 
     }
 
@@ -592,6 +624,8 @@ public class FragmentModuleSetup extends Fragment {
             Log.i("ArraySize", String.valueOf(relayArrayList.size()));
             adapter = new AdapterModuleSetup(relayArrayList,getContext(),pingFoxIP);
             recyclerView.setAdapter(adapter);
+            recyclerView.setItemViewCacheSize(relayArrayList.size());
+            recyclerView.setHasFixedSize(true);
         }
     }
 }

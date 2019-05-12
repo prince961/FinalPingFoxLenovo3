@@ -114,6 +114,7 @@ public class FragmentFirstLogin extends Fragment {
                 editor.putBoolean("NewUser",false);
                 editor.apply();
                 controller.setUser(localUser);
+                Log.i("ControllerUserName",controller.getUser().getFullName());
                 new sendDatatoServer().execute();
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentDeviceControl()).commit();
 
