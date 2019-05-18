@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +14,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -42,6 +44,12 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -54,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     FragmentManager fragmentManager = getSupportFragmentManager();
     GoogleSignInClient mGoogleSignInClient;
     private FusedLocationProviderClient fusedLocationProviderClient;
+    Controller controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +72,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         sharedPreferences = getApplicationContext().getSharedPreferences("UserSP", Context.MODE_PRIVATE);
-        Controller controller = (Controller) getApplicationContext();
+        controller = (Controller) getApplicationContext();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -97,7 +106,7 @@ public class MainActivity extends AppCompatActivity
             }else {
                 //connectWithCloudMQTT();`
                 //oldUser
-                //initialiseController
+                initialiseController(sharedPreferences.getString("LoggedInUserEmailId","a"));
                 Log.i("oncreated", "starting fragment to control device");
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHomeScreen()).commit();
             }
@@ -107,6 +116,69 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         }
     }
+
+    private void initialiseController(String email) {
+        getUserDataFromMogDB task = new getUserDataFromMogDB(email,controller);
+        task.execute();
+
+    }
+
+    public class getUserDataFromMogDB extends AsyncTask<Void, Void, Void> {
+
+        String userEmail;
+        Controller controller;
+        public getUserDataFromMogDB(String email,Controller controller) {
+            this.userEmail = email;
+            this.controller = controller;
+            Log.i("UserEmail",userEmail);
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try{
+                //URL url = new URL("http://dev.pingfox.in:4000/api/ninjas/"+userEmail);
+                URL url = new URL("http://18.221.190.166:4000/api/ninjas/prince.prince961@gmail.com");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setConnectTimeout(5000);
+                conn.setRequestMethod("GET");
+                //conn.setDoOutput(true);
+                conn.setRequestProperty("Content-Type", "application/json");
+                //conn.setRequestProperty("aftership-api-key", ApiKey);
+                conn.connect();
+
+
+                //OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+                //writer.write(body);
+                //writer.flush();
+                int responseCode = conn.getResponseCode();
+                Log.i("responseCode", String.valueOf(responseCode));
+                StringBuilder sb = new StringBuilder();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    //Read till there is something available
+                    sb.append(line + "\n");     //Reading and saving line by line - not all at once
+                }
+                line = sb.toString();
+                Log.i("UserJSONresponse",line);
+
+                JsonParser userFromJson = new JsonParser();
+                User retrivedUser = userFromJson.getUserFromJSON(line);
+                controller.setUser(retrivedUser);
+
+                String retrivedUserTest = retrivedUser.getRoomsArray().get(0).getName();
+
+
+                Log.i("userTestBoolean",retrivedUserTest);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+
 
     private void checkLocationPermission() {
        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -331,49 +403,5 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    /*
-    public void locationAccess(View view) {
-        Log.d("CheckBox ", "pressed1");
-        FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this.getApplicationContext());
-        //getLocationPermission();
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.i("Location","permission not granted");
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-                Log.i("Explanation Location","permission not granted");
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed; request the permission
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
-                Log.i("LocationNoExplanation","permission not granted");
 
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }else {
-            Log.i("Location", "permission already granted");
-            Task location = fusedLocationProviderClient.getLastLocation();
-            location.addOnCompleteListener(new OnCompleteListener() {
-                @Override
-                public void onComplete(@NonNull Task task) {
-                    if (task.isSuccessful()) {
-                        Log.d("location task", "successful");
-                        Location currentLocation = (Location) task.getResult();
-                        Log.d("latitude", String.valueOf(currentLocation.getLatitude()));
-                        Log.d("Longitude", String.valueOf(currentLocation.getLongitude()));
-
-                    } else {
-                        Log.d("location task", "failed");
-                    }
-                }
-            });
-        }
-
-
-    }*/
 }

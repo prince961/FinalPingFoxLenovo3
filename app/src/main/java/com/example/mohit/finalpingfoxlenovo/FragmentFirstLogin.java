@@ -112,6 +112,7 @@ public class FragmentFirstLogin extends Fragment {
                 Log.i("Submit Data", "swtarting fragment to control device");
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean("NewUser",false);
+                editor.putString("LoggedInUserEmailId",firebaseUser.getEmail());
                 editor.apply();
                 controller.setUser(localUser);
                 Log.i("ControllerUserName",controller.getUser().getFullName());
@@ -136,6 +137,9 @@ public class FragmentFirstLogin extends Fragment {
             bodyJson.put("phone",localUser.getPhone());
             bodyJson.put("name",localUser.getFullName());
             bodyJson.put("bhkId",localUser.getBhk());
+            bodyJson.put("address",localUser.getAddress());
+            bodyJson.put("latitude",localUser.getLatitude());
+            bodyJson.put("longitude",localUser.getLongitude());
             JSONArray roomJsonArray = new JSONArray();
 
             ArrayList<Room> roomsArray = localUser.getRoomsArray();

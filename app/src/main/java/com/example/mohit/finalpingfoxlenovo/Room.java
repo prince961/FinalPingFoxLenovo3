@@ -4,10 +4,9 @@ import java.util.ArrayList;
 
 public class Room {
 
-
     private String name;
     private String type;
-    private int ID;
+    private String ID;
     private ArrayList<PingFoxDevice> pingFoxDevices;
 
     public Room(){
@@ -32,5 +31,22 @@ public class Room {
     public ArrayList<PingFoxDevice> getPingFoxDevices() {
         return pingFoxDevices;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
+    public void setPingFoxDevices(ArrayList<PingFoxDevice> pingFoxDevices) {
+        this.pingFoxDevices = pingFoxDevices;
+    }
+
 }
 

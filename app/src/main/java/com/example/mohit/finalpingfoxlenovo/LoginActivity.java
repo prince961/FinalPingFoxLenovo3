@@ -3,6 +3,7 @@ package com.example.mohit.finalpingfoxlenovo;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +11,6 @@ import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -21,7 +21,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
@@ -33,6 +32,11 @@ import com.google.firebase.auth.FirebaseUserMetadata;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -147,9 +151,13 @@ public class LoginActivity extends AppCompatActivity {
                             FirebaseUserMetadata metadata = firebaseUser.getMetadata();
                             User localUser = new User(firebaseUser.getDisplayName(),firebaseUser.getEmail());
                             databaseReference.child("users").child(firebaseUser.getUid()).setValue(localUser);
-                            assert metadata != null;
+                            checkUserDataInMogDB taskCheckExistingUser = new checkUserDataInMogDB(firebaseUser.getEmail());
+                            taskCheckExistingUser.execute();
+                            /*assert metadata != null;
                             Log.i("metadata", String.valueOf(metadata.getCreationTimestamp()));
-                            if (metadata.getCreationTimestamp() == metadata.getLastSignInTimestamp()) {
+                            Log.i("LastSignedTimeStamp",String.valueOf(metadata.getLastSignInTimestamp()));
+                            //if (metadata.getCreationTimestamp() == metadata.getLastSignInTimestamp() && metadata.getCreationTimestamp() < metadata.getLastSignInTimestamp()+5 ) {
+                            if (metadata.getCreationTimestamp() > metadata.getLastSignInTimestamp()-3 ) {
                                 // The user is new, show them a fancy intro screen!
                                 editor.putBoolean("UserLoggedIn",true);
                                 editor.putBoolean("NewUser",true);
@@ -182,7 +190,7 @@ public class LoginActivity extends AppCompatActivity {
                                 //Log.d("phoneNumbber", Objects.requireNonNull(user.getPhoneNumber()));
 
                                 // This is an existing user, show them a welcome back screen.
-                            }
+                            }*/
                             //updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -218,6 +226,96 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(this,MainActivity.class);
         startActivity(intent);
     }
+
+    public class checkUserDataInMogDB extends AsyncTask<Void, Void, Boolean> {
+
+
+        Boolean existingUserBoolean;
+        String userEmail;
+        public checkUserDataInMogDB(String email) {
+            this.userEmail = email;
+            Log.i("UserEmailLogin",userEmail);
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try{
+                //URL url = new URL("http://dev.pingfox.in:4000/api/ninjas/"+userEmail);
+                URL url = new URL("http://dev.pingfox.in:4000/api/checkExistingUser/"+userEmail);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setConnectTimeout(5000);
+                conn.setRequestMethod("GET");
+                //conn.setDoOutput(true);
+                conn.setRequestProperty("Content-Type", "application/json");
+                //conn.setRequestProperty("aftership-api-key", ApiKey);
+                conn.connect();
+
+
+                //OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+                //writer.write(body);
+                //writer.flush();
+                int responseCode = conn.getResponseCode();
+                Log.i("responseCode", String.valueOf(responseCode));
+                StringBuilder sb = new StringBuilder();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    //Read till there is something available
+                    sb.append(line + "\n");     //Reading and saving line by line - not all at once
+                }
+                line = sb.toString();
+
+                JsonParser jsonParser = new JsonParser();
+                existingUserBoolean = jsonParser.checkExistingUserJson(line);
+
+                Log.i("existingUserJSON",line);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return existingUserBoolean;
+        }
+
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                // The user is new, show them a fancy intro screen!
+                Log.d("LoggedInUser","old user");
+                editor.putBoolean("UserLoggedIn",true);
+                editor.putBoolean("NewUser",false);
+                editor.putString("UserName","Mohit");
+                editor.putString("LoggedInUserEmail",userEmail);
+                editor.commit();
+                //fragmentManager.beginTransaction().replace(R.id.content_frame, new LoginFragment()).commit();
+                mGoogleSignInClient.signOut();
+                Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                startActivity(intent);
+                finish();
+
+                //fragmentManager.beginTransaction().replace(R.id.content_frame, new LoginFragment()).commit();
+
+
+
+            } else {
+
+                editor.putBoolean("UserLoggedIn",true);
+                editor.putBoolean("NewUser",true);
+                editor.putString("LoggedInUserEmail",userEmail);
+                Log.d("LoggedInUser","new user");
+                editor.commit();
+                mGoogleSignInClient.signOut();
+                Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                startActivity(intent);
+                finish();
+
+                //Log.d("phoneNumbber", Objects.requireNonNull(user.getPhoneNumber()));
+
+                // This is an existing user, show them a welcome back screen.
+            }
+        }
+
+    }
+
+
 
    /* public void googleLogin(View view) {
         Log.w("ClickListner", "button pressed");

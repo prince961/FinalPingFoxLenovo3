@@ -4,7 +4,10 @@ public class Relay {
     private String relayName;
     private Boolean relayOn;
     int channel;
+
+
     private String commonRelayTopic;
+    private String id;
 
     public Relay(){
         //required for firebase
@@ -41,4 +44,13 @@ public class Relay {
     public void setChannel(int channel) {
         this.channel = channel;
     }
+
+    public void setCommonRelayTopic(String commonRelayTopic) {
+        this.commonRelayTopic = commonRelayTopic;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
 }

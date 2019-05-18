@@ -16,6 +16,9 @@ public class User {
 
     public String bhk;
     public double latitude,longitude;
+
+
+
     public ArrayList<Room> roomsArray = new ArrayList<>();
     private ArrayList<PingFoxDevice> pingFoxDeviceArrayList= new ArrayList<>();
 
@@ -28,6 +31,13 @@ public class User {
         this.email = email;
     }
 
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public void setPhone(String phone) {
         this.phone = phone;
@@ -43,6 +53,10 @@ public class User {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public void setRoomsArray(ArrayList<Room> roomsArray) {
+        this.roomsArray = roomsArray;
     }
 
     public void setBhk(String Lbhk) {
@@ -118,6 +132,18 @@ public class User {
 
     public String getBhk() {
         return bhk;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
     }
 
 
