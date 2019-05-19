@@ -24,6 +24,10 @@ public class Room {
         return name;
     }
 
+    public String getID() {
+        return ID;
+    }
+
     public String getType() {
         return type;
     }

@@ -1,36 +1,24 @@
 package com.example.mohit.finalpingfoxlenovo;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -64,6 +52,7 @@ public class FragmentFirstLogin extends Fragment {
     SharedPreferences sharedPreferences;
     TextView hiText ;
     FirebaseUser firebaseUser;
+    FragmentManager fragmentManager;
     String mongoUSerJSONbody ;
 
 
@@ -96,7 +85,7 @@ public class FragmentFirstLogin extends Fragment {
                 Address = ETAddress.getText().toString();
                 BHKId = ShouseConfig.getSelectedItem().toString();
                 Log.i("BHKId",BHKId);
-                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager = getFragmentManager();
 
                 firebaseUser = mAuth.getCurrentUser();
                 User localUser = new User(firebaseUser.getDisplayName(),firebaseUser.getEmail());
@@ -114,10 +103,8 @@ public class FragmentFirstLogin extends Fragment {
                 editor.putBoolean("NewUser",false);
                 editor.putString("LoggedInUserEmailId",firebaseUser.getEmail());
                 editor.apply();
-                controller.setUser(localUser);
-                Log.i("ControllerUserName",controller.getUser().getFullName());
-                new sendDatatoServer().execute();
-                fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentDeviceControl()).commit();
+                new sendDatatoServer(controller).execute();
+
 
                 //Intent intent = new Intent(getContext(), AddDeviceInRoom.class);
                 //startActivity(intent);
@@ -149,7 +136,6 @@ public class FragmentFirstLogin extends Fragment {
                 Room room = roomsArray.get(l);
                 roomJsonObject.put("roomName",room.getName());
                 roomJsonObject.put("roomType",room.getType());
-                roomJsonObject.put("roomId",1);
                 ArrayList<PingFoxDevice> pingFoxDeviceArrayList = room.getPingFoxDevices();
                 JSONArray deviceJsonArray = new JSONArray();
                 for (int k=0 ;k< pingFoxDeviceArrayList.size() ; k++){
@@ -162,7 +148,7 @@ public class FragmentFirstLogin extends Fragment {
                     pingFoxDeviceJSONobject.put("localConnection",pingFoxDevice.getLocalConnection());
                     pingFoxDeviceJSONobject.put("macAddress",pingFoxDevice.getMacAddress());
                     ArrayList<Relay> devices = pingFoxDevice.getDevices();
-                    JSONArray devicesJSONarray = new JSONArray();
+                    JSONArray relayJsonArray = new JSONArray();
                     for (int i=0 ;i< devices.size() ; i++){
                         Relay relay = devices.get(i);
                         JSONObject relayJSOnobject = new JSONObject();
@@ -170,10 +156,10 @@ public class FragmentFirstLogin extends Fragment {
                         relayJSOnobject.put("relayOn",relay.getRelayOn());
                         relayJSOnobject.put("commonRelayTopic",pingFoxDevice.getFullTopic());
                         relayJSOnobject.put("channel",relay.getChannel());
-                        deviceJsonArray.put(relayJSOnobject);
+                        relayJsonArray.put(relayJSOnobject);
 
                     }
-                    pingFoxDeviceJSONobject.put("deviceList",deviceJsonArray);
+                    pingFoxDeviceJSONobject.put("deviceList",relayJsonArray);
                     deviceJsonArray.put(pingFoxDeviceJSONobject);
                 }
                 roomJsonObject.put("pingFoxDeviceList",deviceJsonArray);
@@ -193,14 +179,17 @@ public class FragmentFirstLogin extends Fragment {
 
     }
 
-    public class sendDatatoServer extends AsyncTask<Void, Void, Void> {
-
-
+    public class sendDatatoServer extends AsyncTask<Void, Void, User> {
+        User user = new User();
+        Controller controller;
+        public sendDatatoServer(Controller controller) {
+            this.controller = controller;
+        }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected User doInBackground(Void... voids) {
             try{
-                URL url = new URL("http://18.221.190.166:4000/api/ninjas");
+                URL url = new URL("http://dev.pingfox.in:4000/api/ninjas");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setConnectTimeout(5000);
                 conn.setRequestMethod("POST");
@@ -220,15 +209,27 @@ public class FragmentFirstLogin extends Fragment {
                     sb.append(line + "\n");     //Reading and saving line by line - not all at once
                 }
                 line = sb.toString();
-
-                Log.i("orderMEssage",line);
+                JsonParser jsonParser = new JsonParser();
+                user = jsonParser.getUserFromJSON(line);
+                Log.i("CreatedUserJsonResponse",line);
                 int responseCode = conn.getResponseCode();
                 Log.i("responseCode", String.valueOf(responseCode));
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return null;
+            return user ;
         }
+
+        @Override
+        protected void onPostExecute(User user) {
+            super.onPostExecute(user);
+            controller.setUser(user);
+            fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentDeviceControl()).commit();
+
+
+        }
+
+
     }
 
 

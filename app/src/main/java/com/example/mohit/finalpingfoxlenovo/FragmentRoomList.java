@@ -27,6 +27,7 @@ public class FragmentRoomList extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_add_device_in_room,container,false);
         FragmentManager fragmentManager = getFragmentManager();
+        final Controller controller = (Controller) getActivity().getApplicationContext();
 
 
 
@@ -35,19 +36,10 @@ public class FragmentRoomList extends Fragment {
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        ArrayList<PingFoxDevice> deviceList = new ArrayList<>();
 
-        Room masterbedroom = new Room("Master Bedroom","Bedroom",deviceList);
-        Room bathroomAttached = new Room("Bathroom","Bathroom",deviceList);
-        Room kitchen = new Room("Kitchen", "Kitchen",deviceList);
-        Room livingRoom  = new Room("LivingRoom", "LivingRoom",deviceList);
-        Room lobby = new Room("Lobby","Lobby",deviceList);
 
-        roomArrayList = new ArrayList<Room>();
-        roomArrayList.add(masterbedroom);
-        roomArrayList.add(bathroomAttached);
-        roomArrayList.add(kitchen);
-        roomArrayList.add(livingRoom);
+        roomArrayList = controller.getUser().getRoomsArray();
+
 
 
         mAdapter = new RoomListAdapter(roomArrayList,getContext(),fragmentManager);

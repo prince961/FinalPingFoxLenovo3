@@ -153,45 +153,7 @@ public class LoginActivity extends AppCompatActivity {
                             databaseReference.child("users").child(firebaseUser.getUid()).setValue(localUser);
                             checkUserDataInMogDB taskCheckExistingUser = new checkUserDataInMogDB(firebaseUser.getEmail());
                             taskCheckExistingUser.execute();
-                            /*assert metadata != null;
-                            Log.i("metadata", String.valueOf(metadata.getCreationTimestamp()));
-                            Log.i("LastSignedTimeStamp",String.valueOf(metadata.getLastSignInTimestamp()));
-                            //if (metadata.getCreationTimestamp() == metadata.getLastSignInTimestamp() && metadata.getCreationTimestamp() < metadata.getLastSignInTimestamp()+5 ) {
-                            if (metadata.getCreationTimestamp() > metadata.getLastSignInTimestamp()-3 ) {
-                                // The user is new, show them a fancy intro screen!
-                                editor.putBoolean("UserLoggedIn",true);
-                                editor.putBoolean("NewUser",true);
-                                String email = firebaseUser.getEmail();
-                                editor.putString("LoggedInUserEmail",email);
-                                Log.d("LoggedInUser","new user");
-                                editor.commit();
-                                mGoogleSignInClient.signOut();
-                                Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                                startActivity(intent);
-                                finish();
-                                //fragmentManager.beginTransaction().replace(R.id.content_frame, new LoginFragment()).commit();
 
-
-
-                            } else {
-                                Log.d("LoggedInUser","old user");
-                                editor.putBoolean("UserLoggedIn",true);
-                                editor.putBoolean("NewUser",false);
-                                editor.putString("UserName","Mohit");
-                                String email = firebaseUser.getEmail();
-                                editor.putString("LoggedInUserEmail",email);
-                                editor.commit();
-                                //fragmentManager.beginTransaction().replace(R.id.content_frame, new LoginFragment()).commit();
-                                mGoogleSignInClient.signOut();
-                                Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                                startActivity(intent);
-                                finish();
-
-                                //Log.d("phoneNumbber", Objects.requireNonNull(user.getPhoneNumber()));
-
-                                // This is an existing user, show them a welcome back screen.
-                            }*/
-                            //updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("firebase auth", "signInWithCredential:failure", task.getException());

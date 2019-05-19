@@ -12,13 +12,8 @@ public class User {
     public String email;
     public String phone;
     public String address;
-
-
     public String bhk;
     public double latitude,longitude;
-
-
-
     public ArrayList<Room> roomsArray = new ArrayList<>();
     private ArrayList<PingFoxDevice> pingFoxDeviceArrayList= new ArrayList<>();
 
@@ -30,6 +25,8 @@ public class User {
         this.fullName = fullName;
         this.email = email;
     }
+
+
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
@@ -118,8 +115,14 @@ public class User {
 
     }
 
+
+
     public String getPhone() {
         return phone;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public String getFullName() {
@@ -144,6 +147,18 @@ public class User {
 
     public double getLongitude() {
         return longitude;
+    }
+
+    public Room getRoom(String id){
+        Room room = new Room();
+
+        for (int i = 0;i<roomsArray.size();i++){
+            if (id.equals(roomsArray.get(i).getID())){
+                room = roomsArray.get(i);
+            }
+        }
+
+        return room;
     }
 
 

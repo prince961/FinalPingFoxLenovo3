@@ -60,7 +60,7 @@ public class RoomListAdapter extends RecyclerView.Adapter <RoomListAdapter.ViewH
             @Override
             public void onClick(View view) {
                 SharedPreferences.Editor spEditor = sharedPreferences.edit();
-                spEditor.putString("AddDeviceInRoom",roomList.get(position).getName());
+                spEditor.putString("AddDeviceInRoomID",roomList.get(position).getID());
                 spEditor.putString("AddDeviceInRoomPosition", String.valueOf(position));
                 spEditor.apply();
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentModuleSetup()).commit();

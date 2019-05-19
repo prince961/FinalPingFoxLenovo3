@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity
             }else {
                 //connectWithCloudMQTT();`
                 //oldUser
-                initialiseController(sharedPreferences.getString("LoggedInUserEmailId","a"));
+                initialiseController(sharedPreferences.getString("LoggedInUserEmail","a"));
                 Log.i("oncreated", "starting fragment to control device");
                 fragmentManager.beginTransaction().replace(R.id.content_frame, new FragmentHomeScreen()).commit();
             }
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity
         protected Void doInBackground(Void... voids) {
             try{
                 //URL url = new URL("http://dev.pingfox.in:4000/api/ninjas/"+userEmail);
-                URL url = new URL("http://18.221.190.166:4000/api/ninjas/prince.prince961@gmail.com");
+                URL url = new URL("http://18.221.190.166:4000/api/ninjas/"+userEmail);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setConnectTimeout(5000);
                 conn.setRequestMethod("GET");
@@ -167,9 +167,11 @@ public class MainActivity extends AppCompatActivity
                 controller.setUser(retrivedUser);
 
                 String retrivedUserTest = retrivedUser.getRoomsArray().get(0).getName();
+                String controllerSetUserTest = controller.getUser().getRoomsArray().get(0).getName();
 
 
-                Log.i("userTestBoolean",retrivedUserTest);
+                Log.i("retrivedUserTest",retrivedUserTest);
+                Log.i("controllerUserTest",controllerSetUserTest);
 
             } catch (Exception e) {
                 e.printStackTrace();

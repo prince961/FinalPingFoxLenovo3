@@ -4,8 +4,6 @@ public class Relay {
     private String relayName;
     private Boolean relayOn;
     int channel;
-
-
     private String commonRelayTopic;
     private String id;
 

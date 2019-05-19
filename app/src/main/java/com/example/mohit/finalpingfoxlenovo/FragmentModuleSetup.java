@@ -35,6 +35,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -136,17 +137,19 @@ public class FragmentModuleSetup extends Fragment {
         }
 
         final Controller controller = (Controller) getActivity().getApplicationContext();
-        User contollerUser =(User) controller.getUser();
+        User contollerUser = controller.getUser();
         ArrayList<Room> roomArrayList = contollerUser.getRoomsArray();
-        String positionRoomString = sharedPreferences.getString("AddDeviceInRoomPosition",null);
-        Log.i("positionRoom", String.valueOf(positionRoomString));
-        int positionRoom = Integer.parseInt(positionRoomString);
+        String roomID = sharedPreferences.getString("AddDeviceInRoomID",null);
         Log.i("roomListlength", contollerUser.getFullName());
-        Room selectedRoom = roomArrayList.get(positionRoom);
+        Room selectedRoom = contollerUser.getRoom(roomID);
         final PingFoxDevice pingFoxDevice = new PingFoxDevice(uniqueDeviceName,fullTopic,relayArrayList);
         selectedRoom.getPingFoxDevices().add(pingFoxDevice);
-        String testDataCapturedRelayName = contollerUser.getRoomsArray().get(positionRoom).getPingFoxDevices().get(0).getDevices().get(0).getRelayName();
-        Log.i("testDataRelayName",testDataCapturedRelayName);
+        JsonSenderToMongo jsonSenderToMongo = new JsonSenderToMongo();
+        jsonSenderToMongo.updateUserInDB(contollerUser);
+        Log.i("controllerTest",controller.getUser().getRoom(roomID).getPingFoxDevices().get(0).getFullTopic());
+
+
+
 
 
 
@@ -433,7 +436,7 @@ public class FragmentModuleSetup extends Fragment {
             Log.i("randomPassword", String.valueOf(pingFoxPassword));
 
             //String topic = "emailId/Room/device";
-            String room = sharedPreferences.getString("AddDeviceInRoom", "no room seected");
+            String room = sharedPreferences.getString("AddDeviceInRoomID", "no room seected");
             String email = sharedPreferences.getString("LoggedInUserEmail", "no email recieved");
             String topic = uniqueDeviceName;
             fullTopic = email + "/" + room + "/" + uniqueDeviceName;

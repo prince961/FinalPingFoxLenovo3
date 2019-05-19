@@ -8,6 +8,7 @@ public class Controller extends Application {
 
 
     private User user = new User();
+
     private ArrayList<Room> roomList = new ArrayList<>();
 
     public void setRoomList(ArrayList<Room> roomList) {

@@ -42,6 +42,13 @@ public class FragmentDeviceControl extends Fragment {
         myView = inflater.inflate(R.layout.fragment_control_devices, container, false);
         deviceStatusImage =(ImageView) myView.findViewById(R.id.DeviceStatusImage);
         toggleButton = myView.findViewById(R.id.toggleButton);
+        final Controller controller = (Controller) getActivity().getApplicationContext();
+        String controllerSetUserTest = controller.getUser().getRoomsArray().get(0).getName();
+
+
+
+        Log.i("controllerUserTestFDC",controllerSetUserTest);
+
 
 
         Log.i("control_devices","trying to establish connection");
