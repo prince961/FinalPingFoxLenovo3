@@ -45,7 +45,7 @@ public class FragmentAddDeviceInRoom extends Fragment {
     InetAddress pingFoxIP;
     Button toggleButton;
     ImageView deviceStatusImage;
-    String deviceName = "abc";
+    String macAddress = "abc";
     String uniqueDeviceName ;
     private ArrayList<String> AlreadyAddedMacAddress;
     SharedPreferences sharedPreferences;
@@ -70,6 +70,8 @@ public class FragmentAddDeviceInRoom extends Fragment {
         if (s.equals("7 (Sonoff 4CH)")){
             pingFoxDeviceName = "Pingfox quatro";
             numberRelays = 4;
+        }else {
+            pingFoxDeviceName = s;
         }
         return pingFoxDeviceName;
     }
@@ -169,7 +171,7 @@ public class FragmentAddDeviceInRoom extends Fragment {
             progDailog.dismiss();
             if (aBoolean){
                 //Toast.makeText(getContext(),"Found pingfox device on network",Toast.LENGTH_SHORT).show();
-                String pingFoxDeviceName = getPingFoxDeviceName(deviceName);
+                String pingFoxDeviceName = getPingFoxDeviceName(macAddress);
                 //set a nique devicename for a unique topic
                 setUniqueDeviceName(pingFoxDeviceName);
 
@@ -198,7 +200,7 @@ public class FragmentAddDeviceInRoom extends Fragment {
 
 
         try {
-            URL url = new URL("http:/" + address + "/cm?cmnd=module");
+            URL url = new URL("http:/" + address + "/cm?cmnd=status%205");
             Log.i("URL", String.valueOf(url));
             //URL url = new URL("http://192.168.0.105/cm?cmnd=power%20toggle");
 
@@ -240,11 +242,13 @@ public class FragmentAddDeviceInRoom extends Fragment {
                 String jsonString = line.split("=")[1];
                 Log.i("jsonString",jsonString);
                 JSONObject jsonObject = new JSONObject(jsonString);
+                JSONObject jsonObject1= jsonObject.getJSONObject("StatusNET");
                 //Just check to the values received in Logcat
                 Log.i("custom_check", "The values received in the store part are as follows:");
-                Log.i("rever", line);
+                Log.i("revert", line);
                 Log.i("response_code", Integer.toString(responseCode));
-                deviceName = jsonObject.getString("Module");
+                macAddress = jsonObject1.getString("Mac");
+                Log.i("mac",macAddress);
 
 
 

@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +40,7 @@ public class FragmentRoomList extends Fragment {
 
 
         roomArrayList = controller.getUser().getRoomsArray();
+        Log.i("InitiatedController", String.valueOf(controller.getRoomList().size()));
 
 
 

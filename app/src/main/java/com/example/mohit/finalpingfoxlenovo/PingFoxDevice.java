@@ -24,6 +24,8 @@ public class PingFoxDevice {
         this.devices = devices;
         this.fullTopic = fullTopic;
         macAddress = "dummy";
+        InternetConnection = true;
+        LocalConnection = true;
     }
 
     public String getPingFoxDeviceName() {

@@ -58,7 +58,7 @@ public class FragmentModuleSetup extends Fragment {
     ProgressDialog progDailog;
     InetAddress pingFoxIP;
 
-    String deviceName = "abc";
+    String macAddress = "abc";
     String uniqueDeviceName;
     private ArrayList<String> AlreadyAddedMacAddress;
     SharedPreferences sharedPreferences;
@@ -143,6 +143,7 @@ public class FragmentModuleSetup extends Fragment {
         Log.i("roomListlength", contollerUser.getFullName());
         Room selectedRoom = contollerUser.getRoom(roomID);
         final PingFoxDevice pingFoxDevice = new PingFoxDevice(uniqueDeviceName,fullTopic,relayArrayList);
+        pingFoxDevice.setMacAddress(macAddress);
         selectedRoom.getPingFoxDevices().add(pingFoxDevice);
         JsonSenderToMongo jsonSenderToMongo = new JsonSenderToMongo();
         jsonSenderToMongo.updateUserInDB(contollerUser);
@@ -186,9 +187,13 @@ public class FragmentModuleSetup extends Fragment {
     }
 
     private String getPingFoxDeviceName(String s) {
+        // in future this method can get the Pingfox device name from a database which will have the mac address and device name and channel mapped
         String pingFoxDeviceName = null;
         if (s.equals("7 (Sonoff 4CH)")) {
             pingFoxDeviceName = "Pingfox quatro";
+            numberRelays = 4;
+        }else{
+            pingFoxDeviceName = s;
             numberRelays = 4;
         }
         return pingFoxDeviceName;
@@ -287,7 +292,7 @@ public class FragmentModuleSetup extends Fragment {
             progDailog.dismiss();
             if (aBoolean) {
                 //Toast.makeText(getContext(),"Found pingfox device on network",Toast.LENGTH_SHORT).show();
-                String pingFoxDeviceName = getPingFoxDeviceName(deviceName);
+                String pingFoxDeviceName = getPingFoxDeviceName(macAddress);
                 //set a nique devicename for a unique topic
                 setUniqueDeviceName(pingFoxDeviceName);
 
@@ -315,7 +320,7 @@ public class FragmentModuleSetup extends Fragment {
 
 
         try {
-            URL url = new URL("http:/" + address + "/cm?cmnd=module");
+            URL url = new URL("http:/" + address + "/cm?cmnd=status%205");
             Log.i("URL", String.valueOf(url));
             //URL url = new URL("http://192.168.0.105/cm?cmnd=power%20toggle");
 
@@ -355,13 +360,16 @@ public class FragmentModuleSetup extends Fragment {
                 }
                 line = sb.toString();           //Saving complete data received in string, you can do it differently
                 String jsonString = line.split("=")[1];
-                Log.i("jsonString", jsonString);
+                Log.i("jsonString",jsonString);
                 JSONObject jsonObject = new JSONObject(jsonString);
+                JSONObject jsonObject1= jsonObject.getJSONObject("StatusNET");
                 //Just check to the values received in Logcat
                 Log.i("custom_check", "The values received in the store part are as follows:");
-                Log.i("rever", line);
+                Log.i("revert", line);
                 Log.i("response_code", Integer.toString(responseCode));
-                deviceName = jsonObject.getString("Module");
+                macAddress = jsonObject1.getString("Mac");
+                Log.i("mac",macAddress);
+
 
 
             } else {
@@ -396,7 +404,7 @@ public class FragmentModuleSetup extends Fragment {
             }
 
 
-        } catch (IOException e) {
+        }catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
